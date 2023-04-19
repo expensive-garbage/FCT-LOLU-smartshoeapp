@@ -30,6 +30,13 @@ class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   var season = 'Spring';
   var nbShoes = 5;
+  var photoUrl= 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80';
+  var name= 'Classic Sneakers';
+  var brand= 'Nike';
+  var colors= ['White', 'Black', 'Gray'];
+  var waterproof= false;
+  var id= '1234';
+  var seasonOfShoes = 'Spring';
 
   void getNext() {
     current = WordPair.random();
@@ -43,87 +50,57 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
+  int _currentIndex = 0;
+
+  final List<Widget> _children = [    HomePage(),    ShoeRackPage(),    ShoePage()];
+
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
 
-
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = GeneratorPage();
-        break;
-      case 1:
-        page = ShoeRackPage();
-        break;
-      case 2:
-        page = Placeholder();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-
-
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        actions: [
+        iconTheme: IconThemeData(color: Colors.grey),
+        actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.account_circle),
+            icon: Icon(Icons.person),
             onPressed: () {
-              setState(() {
-                  selectedIndex = 2;
-                });
+              onTabTapped(2);
             },
           ),
         ],
       ),
-      body:Row(
-          children:[
-            Expanded(
-            child: Container(
-              child: page,
-              ),
-            ),  
-          ],
-        ),
-      bottomNavigationBar: BottomAppBar(
-        shape: const AutomaticNotchedShape(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
+      body:_children[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: onTabTapped,
+        selectedItemColor: Color.fromRGBO(25, 131, 123, 1),
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          StadiumBorder(),
-        ),
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              onPressed: () {setState(() {
-                  selectedIndex = 0;
-                });},
-            ),
-            IconButton(
-              icon: const Icon(Icons.dashboard_customize_rounded),
-              onPressed: () {
-                setState(() {
-                  selectedIndex = 1;
-                });
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.account_circle),
-              onPressed: () {
-                setState(() {
-                  selectedIndex = 2;
-                });
-              },
-            ),
-          ],
-        ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view),
+            label : 'Shoe Rack',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          )
+        ],
       ),
     );
+  }
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
 
@@ -133,15 +110,20 @@ class Season extends StatelessWidget {
     required this.season,
   });
 
+
   final String season;
 
   @override
   Widget build(BuildContext context) {
-    return Text('It is '+season+'!');
+    return Text('It is $season', 
+      style: TextStyle(
+        color: Color.fromRGBO(25, 131, 123, 1),
+        fontWeight: FontWeight.bold,
+        fontSize: 18.0,),);
   }
 }
 
-class GeneratorPage extends StatelessWidget {
+class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -151,10 +133,10 @@ class GeneratorPage extends StatelessWidget {
 
 
     return Center(
-      
       child: Column(
         children: [
           Season(season: season),
+          Text ("Try this pair of shoes with this outfit"),
           Row(children: [
             ElevatedButton(
               onPressed: () {},
@@ -166,7 +148,18 @@ class GeneratorPage extends StatelessWidget {
               ),
           ],
           ),
+          ElevatedButton(
+              onPressed: () {},
+              child: Text('Other Recommendations'),
+              ),
           Text('Need Cleaning'),
+          Row(children: [
+            ElevatedButton(
+              onPressed: () {},
+              child: Text('Shoe'),
+            ),
+          ],
+          ),
         ],
       ),
     );
@@ -190,8 +183,8 @@ class ShoeRackPage extends StatelessWidget {
           for(var i = 0; i <= nbShoes; i++)
             ElevatedButton(
               onPressed: (){
+                //go to shoe page by changing the index of the children of the scaffold
                 print('button pressed!');
-                appState.nbShoes--;
               },
               child: Text('Shoe $i')
             ),
@@ -205,6 +198,78 @@ class ShoeRackPage extends StatelessWidget {
           )
 
         ],
+      ),
+    );
+  }
+}
+
+class ShoePage extends StatelessWidget {
+  
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var photoUrl = appState.photoUrl;
+    var name = appState.name;
+    var brand = appState.brand;
+    var colors = appState.colors;
+    var waterproof = appState.waterproof;
+    var seasonOfShoes = appState.seasonOfShoes;
+    var id = appState.id;
+
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(photoUrl),
+            SizedBox(height: 16.0),
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              brand,
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Colors: ${colors.join(", ")}',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Season: $seasonOfShoes',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Waterproof: ${waterproof ? "Yes" : "No"}',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'ID: $id',
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
