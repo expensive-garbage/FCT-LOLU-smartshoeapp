@@ -4,7 +4,10 @@ import 'MyApp.dart';
 
 
 class ShoePage extends StatelessWidget {
-  
+  final int id;
+
+  const ShoePage({required this.id});
+
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,6 @@ class ShoePage extends StatelessWidget {
     var colors = appState.colors;
     var waterproof = appState.waterproof;
     var seasonOfShoes = appState.seasonOfShoes;
-    var id = appState.id;
 
     return Center(
       child: Container(

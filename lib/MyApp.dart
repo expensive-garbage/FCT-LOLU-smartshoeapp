@@ -32,4 +32,17 @@ class MyAppState extends ChangeNotifier {
   var waterproof= false;
   var id= '1234';
   var seasonOfShoes = 'Spring';
+  var actualShoe = -1;
+
+  //define the functions that change the data
+  void changeActualShoe(int index) {
+    actualShoe = index;
+    notifyListeners();
+  }
+
+  void changeNbShoes(int index) {
+    nbShoes = index;
+    notifyListeners();
+  }
 }
+
