@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-<<<<<<< HEAD
-import 'MyApp.dart';
-
-=======
 
 import 'MyApp.dart';
 
@@ -47,4 +43,3 @@ class _ShoeRackPageState extends State<ShoeRackPage> {
     );
   }
 }
->>>>>>> 43e82c2 (connection to firebase)
