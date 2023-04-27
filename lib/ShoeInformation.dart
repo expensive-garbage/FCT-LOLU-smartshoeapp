@@ -37,23 +37,37 @@ class _ShoesInformationState extends State<ShoesInformation> {
                 children: snapshot.data!.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data =
                       document.data()! as Map<String, dynamic>;
-                  return ElevatedButton(
-                    onPressed: () {
-                      appState.changeActualShoe(document.id);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(
-                          25, 131, 123, 1), // Set the background color
-                      foregroundColor: Colors.grey, // Set the text color
-                      padding: EdgeInsets.all(16), // Set the padding
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(8), // Set the border radius
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        appState.changeActualShoe(document.id);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(
+                            25, 131, 123, 1), // Set the background color
+                        foregroundColor: Colors.grey, // Set the text color
+                        //padding: const EdgeInsets.all(1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              15), // Set the border radius
+                        ),
                       ),
-                    ),
-                    child: ListTile(
-                      title: Text(data['Name']),
-                      subtitle: Text(data['Brand']),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              data['PhotoURL'],
+                            ),
+                          ),
+                          Text(data['Name'],
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20)),
+                          Text(data['Brand'],
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 20)),
+                        ],
+                      ),
                     ),
                   );
                 }).toList(),
