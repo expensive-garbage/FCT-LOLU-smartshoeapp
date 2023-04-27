@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyApp.dart';
 
-
 class ShoePage extends StatelessWidget {
-  final int id;
+  final String id;
 
-  const ShoePage({required this.id});
-
+  const ShoePage({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +50,7 @@ class ShoePage extends StatelessWidget {
             SizedBox(height: 8.0),
             Text(
               'Season: $seasonOfShoes',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16.0,
               ),
             ),
