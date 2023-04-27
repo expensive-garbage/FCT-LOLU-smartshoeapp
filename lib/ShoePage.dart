@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyApp.dart';
 
+<<<<<<< HEAD
 
 class ShoePage extends StatelessWidget {
   final int id;
 
   const ShoePage({required this.id});
 
+=======
+class ShoePage extends StatelessWidget {
+  final String id;
+
+  const ShoePage({super.key, required this.id});
+>>>>>>> 43e82c2 (connection to firebase)
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +59,11 @@ class ShoePage extends StatelessWidget {
             SizedBox(height: 8.0),
             Text(
               'Season: $seasonOfShoes',
+<<<<<<< HEAD
               style: TextStyle(
+=======
+              style: const TextStyle(
+>>>>>>> 43e82c2 (connection to firebase)
                 fontSize: 16.0,
               ),
             ),
@@ -75,4 +86,8 @@ class ShoePage extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 43e82c2 (connection to firebase)
