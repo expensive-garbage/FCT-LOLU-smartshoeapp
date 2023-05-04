@@ -27,11 +27,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  int _currentIndex = 0;
-
   final List<Widget> _children = [
     HomePage(),
-    ShoesInformation(),
+    const ShoesInformation(),
     ProfilePage(),
     ShoeRackPage(
       key: shoeRackPageStateeKey,
@@ -116,17 +114,15 @@ class _ShoeRackPageState extends State<ShoeRackPage> {
             ElevatedButton(
                 onPressed: () {
                   //go to shoe page by changing the index of the children of the scaffold
-                  print('button pressed!');
                   appState.changeActualShoe("lol");
                 },
                 child: Text('Shoe $i')),
 
           ElevatedButton(
               onPressed: () {
-                print('button pressed!');
                 appState.changeNbShoes(appState.nbShoes + 1);
               },
-              child: Text('Add a shoe'))
+              child: const Text('Add a shoe'))
         ],
       ),
     );
