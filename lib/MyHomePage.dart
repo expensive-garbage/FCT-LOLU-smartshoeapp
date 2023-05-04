@@ -15,13 +15,17 @@ import 'ProfilePage.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> {
   void updateState(int index) {
     setState(() {
-      _currentIndex = index;
+      if (index == 2) {
+        Navigator.pushNamed(context, '/profile');
+      } else {
+        _currentIndex = index;
+      }
     });
   }
 

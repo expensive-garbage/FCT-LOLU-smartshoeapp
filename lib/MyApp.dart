@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/ProfilePage.dart';
+import 'package:namer_app/ShoePage.dart';
 import 'package:provider/provider.dart';
 
 import 'MyHomePage.dart';
@@ -9,13 +11,20 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Smart Shoe Rack',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
               seedColor: Color.fromARGB(255, 120, 214, 178)),
         ),
-        home: MyHomePage(),
+        //home: MyHomePage(),
+        initialRoute: '/',
+        routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
+          '/': (context) => MyHomePage(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
+          '/profile': (context) => const ProfilePage(),
+        },
       ),
     );
   }
