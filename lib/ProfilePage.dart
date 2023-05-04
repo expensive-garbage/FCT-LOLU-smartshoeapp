@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'MyHomePage.dart';
 import 'MyApp.dart';
 
@@ -21,6 +22,8 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
     int _currentIndex = 0;
 
     return Scaffold(
@@ -150,6 +153,7 @@ class ProfilePage extends StatelessWidget {
         currentIndex: _currentIndex,
         onTap: (int index) {
           // Appeler deux fonctions ici
+          appState.changeIndexMyHomePage(index);
           updateState(index, context);
         },
         selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),

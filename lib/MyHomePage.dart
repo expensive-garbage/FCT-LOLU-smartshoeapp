@@ -23,8 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       if (index == 2) {
         Navigator.pushNamed(context, '/profile');
-      } else {
-        _currentIndex = index;
       }
     });
   }
@@ -43,6 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var currentIndex = appState.indexMyHomePage;
 
     return Scaffold(
       appBar: AppBar(
@@ -59,13 +58,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: appState.actualShoe == ""
-          ? _children[_currentIndex]
+          ? _children[currentIndex]
           : ShoePage(id: appState.actualShoe),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         onTap: (int index) {
           // Appeler deux fonctions ici
-          updateState(index);
+          if (index == 2) {
+            updateState(2);
+          } else {
+            appState.changeIndexMyHomePage(index);
+          }
           appState.changeActualShoe("");
         },
         selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),

@@ -33,25 +33,69 @@ class MyApp extends StatelessWidget {
 class MyAppState extends ChangeNotifier {
   //define the data the app needs to function
   var season = 'Spring';
+
+  //a suprr
   var nbShoes = 5;
-  var photoUrl =
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80';
-  var name = 'Classic Sneakers';
-  var brand = 'Nike';
-  var colors = ['White', 'Black', 'Gray'];
-  var waterproof = false;
-  var id = '1234';
-  var seasonOfShoes = 'Spring';
+
+  var photoUrlShoe = "";
+  var nameShoe = "";
+  var brandShoe = "";
+  var colorsShoe = [];
+  var waterproofShoe = false;
+  var seasonShoe = [];
   var actualShoe = "";
 
+  var indexMyHomePage = 0;
+  var indexProfilePage = 0;
+
   //define the functions that change the data
-  void changeActualShoe(String id) {
-    actualShoe = id;
+  void changeIndexMyHomePage(int index) {
+    indexMyHomePage = index;
+    notifyListeners();
+  }
+
+  void changeIndexProfilePage(int index) {
+    indexProfilePage = index;
     notifyListeners();
   }
 
   void changeNbShoes(int index) {
     nbShoes = index;
+    notifyListeners();
+  }
+
+  void changeActualShoe(String id) {
+    actualShoe = id;
+    notifyListeners();
+  }
+
+  void changeBrandShoe(String brand) {
+    brandShoe = brand;
+    notifyListeners();
+  }
+
+  void changeWaterproofShoe(bool waterproof) {
+    waterproofShoe = waterproof;
+    notifyListeners();
+  }
+
+  void changeNameShoe(String name) {
+    nameShoe = name;
+    notifyListeners();
+  }
+
+  void changeColorsShoe(List colors) {
+    colorsShoe = colors;
+    notifyListeners();
+  }
+
+  void changeSeasonShoe(List season) {
+    seasonShoe = season;
+    notifyListeners();
+  }
+
+  void changePhotoUrlShoe(String url) {
+    photoUrlShoe = url;
     notifyListeners();
   }
 }

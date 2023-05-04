@@ -42,6 +42,12 @@ class _ShoesInformationState extends State<ShoesInformation> {
                     child: ElevatedButton(
                       onPressed: () {
                         appState.changeActualShoe(document.id);
+                        appState.changePhotoUrlShoe(data['PhotoURL']);
+                        appState.changeNameShoe(data['Name']);
+                        appState.changeBrandShoe(data['Brand']);
+                        appState.changeColorsShoe(data['Colors']);
+                        appState.changeWaterproofShoe(data['Waterproof']);
+                        appState.changeSeasonShoe(data['Season']);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(
