@@ -46,6 +46,11 @@ class StatisticsPageState extends State<StatisticsPage> {
     int currentIndex = 0;
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Statistics',
+                style:TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        backgroundColor:const Color.fromRGBO(25, 131, 123, 1) ,
+      ),
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height,)
@@ -53,22 +58,6 @@ class StatisticsPageState extends State<StatisticsPage> {
           child: Padding(padding: EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Container(
-                color: const Color.fromRGBO(25, 131, 123, 1),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      SizedBox(height: 16),
-                      Text('Statistics',
-                          style:
-                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: PieChart(
