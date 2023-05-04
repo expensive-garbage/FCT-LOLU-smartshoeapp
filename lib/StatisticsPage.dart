@@ -48,16 +48,17 @@ class StatisticsPageState extends State<StatisticsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics',
-                style:TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor:const Color.fromRGBO(25, 131, 123, 1) ,
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromRGBO(25, 131, 123, 1),
       ),
       body: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height,)
-        ,
-          child: Padding(padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: PieChart(
@@ -69,7 +70,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                 ),
               ),
               const Text('Wearing days of each shoes',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+                  style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
               const SizedBox(height: 16),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -88,41 +90,14 @@ class StatisticsPageState extends State<StatisticsPage> {
                           xValueMapper: (ChartData data, _) => data.x,
                           yValueMapper: (ChartData data, _) => data.y)
                     ],
-                  )
-                  ),
+                  )),
               const Text('Humidity Rate',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-                  const SizedBox(height: 16),
-            
-
-                ]),
+                  style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+              const SizedBox(height: 16),
+            ]),
           ),
         ),
-        
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (int index) {
-          updateState(index, context);
-        },
-        selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
-        unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view),
-            label: 'Shoe Rack',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          )
-        ],
       ),
     );
   }

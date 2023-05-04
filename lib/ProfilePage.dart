@@ -32,10 +32,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: _children[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
-          appState.changeIndexMyHomePage(index);
+          appState.changeIndexProfilePage(0);
+          appState.indexMyHomePage = index;
           updateState(index, context);
         },
         selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
@@ -63,18 +64,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
 class ProfileInformationPage extends StatelessWidget {
   const ProfileInformationPage({Key? key}) : super(key: key);
-  void _navigateToStatistics(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    appState.changeIndexProfilePage(1);
-  }
-
-  void _navigateToSettings(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    appState.changeIndexProfilePage(2);
-  }
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     return Column(
       children: [
         Container(
@@ -124,7 +117,7 @@ class ProfileInformationPage extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             ElevatedButton(
-                onPressed: () => _navigateToStatistics(context),
+                onPressed: () => appState.changeIndexProfilePage(1),
                 style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(20),
@@ -151,7 +144,7 @@ class ProfileInformationPage extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             ElevatedButton(
-              onPressed: () => _navigateToSettings(context),
+              onPressed: () => appState.changeIndexProfilePage(2),
               style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(20),
@@ -179,7 +172,7 @@ class ProfileInformationPage extends StatelessWidget {
             ),
             const Expanded(child: SizedBox()),
             ElevatedButton(
-              onPressed: () => _navigateToStatistics(context),
+              onPressed: () => appState.changeIndexProfilePage(1),
               style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(20),

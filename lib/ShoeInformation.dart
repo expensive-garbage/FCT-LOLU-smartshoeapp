@@ -47,7 +47,7 @@ class _ShoesInformationState extends State<ShoesInformation> {
                         appState.changeBrandShoe(data['Brand']);
                         appState.changeColorsShoe(data['Colors']);
                         appState.changeWaterproofShoe(data['Waterproof']);
-                        appState.changeSeasonShoe(data['Season']);
+                        appState.changeSeasonShoe(data['Seasons']);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(

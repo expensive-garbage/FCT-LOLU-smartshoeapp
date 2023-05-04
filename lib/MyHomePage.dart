@@ -59,11 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ? _children[currentIndex]
           : ShoePage(id: appState.actualShoe),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
           if (index == 2) {
-            updateState(2);
+            appState.indexMyHomePage = index;
+            updateState(index);
           } else {
             appState.changeIndexMyHomePage(index);
           }
