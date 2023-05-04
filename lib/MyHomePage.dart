@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/AddShoePage.dart';
 
 import 'package:namer_app/ShoeInformation.dart';
 
@@ -8,12 +9,13 @@ import 'MyApp.dart';
 
 import 'HomePage.dart';
 
-import 'ShoeRackPage.dart';
 import 'ShoePage.dart';
 
 import 'ProfilePage.dart';
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -31,9 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomePage(),
     const ShoesInformation(),
     ProfilePage(),
-    ShoeRackPage(
-      key: shoeRackPageStateeKey,
-    )
+    AddShoePage(),
   ];
 
   @override
@@ -59,7 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ? _children[currentIndex]
           : ShoePage(id: appState.actualShoe),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: appState.indexMyHomePage,
+        currentIndex:
+            appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
           if (index == 2) {
@@ -94,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class ShoeRackPage extends StatefulWidget {
-  ShoeRackPage({Key? key}) : super(key: key);
+  const ShoeRackPage({Key? key}) : super(key: key);
 
   @override
   State<ShoeRackPage> createState() => _ShoeRackPageState();

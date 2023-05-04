@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'MyHomePage.dart';
 import 'MyApp.dart';
 import 'StatisticsPage.dart';
 import 'SettingsPage.dart';
@@ -32,7 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       body: _children[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: appState.indexMyHomePage,
+        currentIndex:
+            appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
           appState.changeIndexProfilePage(0);

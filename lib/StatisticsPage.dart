@@ -1,10 +1,7 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-//import 'package:line_chart/charts/line-chart.widget.dart';
-//import 'MyHomePage.dart';
-//import 'MyApp.dart';
+import 'package:namer_app/MyApp.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StatisticsPage extends StatefulWidget {
@@ -43,6 +40,7 @@ class StatisticsPageState extends State<StatisticsPage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     int currentIndex = 0;
 
     return Scaffold(
@@ -50,6 +48,14 @@ class StatisticsPageState extends State<StatisticsPage> {
         title: const Text('Statistics',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
         backgroundColor: const Color.fromRGBO(25, 131, 123, 1),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Action souhaitée lors de l'appui sur le bouton flèche
+            // Par exemple, pour revenir à l'écran précédent :
+            appState.changeIndexProfilePage(0);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: ConstrainedBox(

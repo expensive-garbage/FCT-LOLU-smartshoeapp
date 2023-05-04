@@ -80,7 +80,9 @@ class _ShoesInformationState extends State<ShoesInformation> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  appState.changeActualShoe("");
                   appState.changeNbShoes(appState.nbShoes + 1);
+                  appState.changeIndexMyHomePage(3);
                 },
                 child: const Text('Add a shoe'),
               ),
