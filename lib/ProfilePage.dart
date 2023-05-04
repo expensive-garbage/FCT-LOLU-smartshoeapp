@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyHomePage.dart';
 import 'MyApp.dart';
+import 'StatisticsPage.dart';
+import 'SettingsPage.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -10,7 +12,14 @@ class ProfilePage extends StatelessWidget {
   void _navigateToStatistics(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyHomePage()),
+      MaterialPageRoute(builder: (context) => StatisticsPage()),
+    );
+  }
+
+  void _navigateToSettings(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SettingsPage()),
     );
   }
 
@@ -106,7 +115,7 @@ class ProfilePage extends StatelessWidget {
               ),
               const Expanded(child: SizedBox()),
               ElevatedButton(
-                onPressed: () => _navigateToStatistics(context),
+                onPressed: () => _navigateToSettings(context),
                 style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(20),
