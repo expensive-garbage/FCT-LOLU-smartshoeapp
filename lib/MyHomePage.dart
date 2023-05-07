@@ -21,14 +21,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void updateState(int index) {
-    setState(() {
-      if (index == 2) {
-        Navigator.pushNamed(context, '/profile');
-      }
-    });
-  }
-
   final List<Widget> _children = [
     HomePage(),
     const ShoesInformation(),
@@ -49,7 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              updateState(2);
+              appState.changeIndexMyHomePage(2);
+              Navigator.pushNamed(context, '/profile');
               appState.changeActualShoe("");
             },
           ),
@@ -64,8 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: (int index) {
           // Appeler deux fonctions ici
           if (index == 2) {
-            appState.indexMyHomePage = index;
-            updateState(index);
+            appState.changeIndexMyHomePage(2);
+            Navigator.pushNamed(context, '/profile');
           } else {
             appState.changeIndexMyHomePage(index);
           }
@@ -123,6 +116,7 @@ class _ShoeRackPageState extends State<ShoeRackPage> {
           ElevatedButton(
               onPressed: () {
                 appState.changeNbShoes(appState.nbShoes + 1);
+                appState.changeIndexMyHomePage(3);
               },
               child: const Text('Add a shoe'))
         ],

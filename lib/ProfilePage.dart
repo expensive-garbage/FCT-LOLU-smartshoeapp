@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyApp.dart';
@@ -14,7 +15,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void updateState(int index, BuildContext context) {
     if (index != 2) {
-      Navigator.pushNamed(context, '/');
+      Navigator.pushNamed(context, '/home');
     }
   }
 
@@ -77,7 +78,7 @@ class ProfileInformationPage extends StatelessWidget {
           child: Center(
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const SizedBox(height: 10),
+              const SizedBox(height: 50),
               Container(
                 //width: MediaQuery.of(context).size.width,
                 //height: MediaQuery.of(context).size.height*0.3,
@@ -94,6 +95,8 @@ class ProfileInformationPage extends StatelessWidget {
               //const SizedBox(height: 10),
               const Text('Lucie Boucher',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+
+              const SizedBox(height: 10),
             ]),
           ),
         ),
@@ -167,12 +170,18 @@ class ProfileInformationPage extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             const Text(
-              'Change Profile',
+              'Deconnexion',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
             ),
             const Expanded(child: SizedBox()),
             ElevatedButton(
-              onPressed: () => appState.changeIndexProfilePage(1),
+              onPressed: () async {
+                appState.changeUid('');
+                await FirebaseAuth.instance.signOut();
+                appState.changeIndexMyHomePage(0);
+                Navigator.pushNamed(context, '/');
+                appState.changeIndexProfilePage(0);
+              },
               style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(20),
