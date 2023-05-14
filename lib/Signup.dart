@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
@@ -16,8 +19,32 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  _SignupState();
   File? _imageFile;
 
+  Future<String> uploadImage() async {
+    if (_imageFile != null) {
+      try {
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference? imagesRef = storageRef
+            .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        // Uploader le fichier sur Firebase Storage
+        await imagesRef.putFile(_imageFile!);
+
+        // Récupérer l'URL de téléchargement de l'image
+        String downloadURL = await imagesRef.getDownloadURL();
+
+        // Faire quelque chose avec l'URL de téléchargement, comme l'afficher dans l'application
+        print('Image uploaded: $downloadURL');
+        return downloadURL;
+      } catch (e) {
+        print('Error uploading image to Firebase Storage: $e');
+      }
+    }
+    return '';
+  }
+
+  CollectionReference user = FirebaseFirestore.instance.collection('user');
   Future<void> _getImage() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -48,6 +75,8 @@ class _SignupState extends State<Signup> {
     var appState = context.watch<MyAppState>();
     var emailAddress = '';
     var password = '';
+    var name = '';
+    var photoURL = '';
     return Scaffold(
       body: Center(
         child: Padding(
@@ -106,13 +135,23 @@ class _SignupState extends State<Signup> {
                       onPressed: () async {
                         emailAddress = myEmailController.text;
                         password = myPasswordController.text;
+                        name = myNameController.text;
+                        photoURL = await uploadImage();
                         try {
                           final credential = await FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                             email: emailAddress,
                             password: password,
                           );
-                          appState.changeUid(credential.user!.uid);
+                          user.doc(credential.user!.uid).set({
+                            'PhotoURL': photoURL,
+                            'Name': name,
+                          }).then((value) {
+                            print('Document ajouté avec succès');
+                          }).catchError((error) {
+                            print(
+                                'Erreur lors de l\'ajout du document: $error');
+                          });
                           Navigator.pushNamed(context, '/home');
                           appState.changeIndexFirstPage(0);
                         } on FirebaseAuthException catch (e) {

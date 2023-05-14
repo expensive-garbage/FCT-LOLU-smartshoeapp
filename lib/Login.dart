@@ -66,7 +66,6 @@ class _LoginState extends State<Login> {
                           final credential = await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                                   email: emailAddress, password: password);
-                          appState.changeUid(credential.user!.uid);
                           Navigator.pushNamed(context, '/home');
                           appState.changeIndexFirstPage(0);
                         } on FirebaseAuthException catch (e) {

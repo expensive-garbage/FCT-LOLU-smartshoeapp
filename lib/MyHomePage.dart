@@ -42,8 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.person),
             onPressed: () {
               appState.changeIndexMyHomePage(2);
-              Navigator.pushNamed(context, '/profile');
               appState.changeActualShoe("");
+              Navigator.pushNamed(context, '/profile');
             },
           ),
         ],
@@ -56,13 +56,13 @@ class _MyHomePageState extends State<MyHomePage> {
             appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
+          appState.changeActualShoe("");
           if (index == 2) {
             appState.changeIndexMyHomePage(2);
             Navigator.pushNamed(context, '/profile');
           } else {
             appState.changeIndexMyHomePage(index);
           }
-          appState.changeActualShoe("");
         },
         selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
         unselectedItemColor: Colors.grey,

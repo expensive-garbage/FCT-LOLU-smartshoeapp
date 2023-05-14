@@ -51,8 +51,6 @@ class MyAppState extends ChangeNotifier {
   var indexProfilePage = 0;
   var indexFirstPage = 0;
 
-  var uid = "";
-
   //define the functions that change the data
   void changeIndexMyHomePage(int index) {
     indexMyHomePage = index;
@@ -66,11 +64,6 @@ class MyAppState extends ChangeNotifier {
 
   void changeIndexFirstPage(int index) {
     indexFirstPage = index;
-    notifyListeners();
-  }
-
-  void changeUid(String id) {
-    uid = id;
     notifyListeners();
   }
 
