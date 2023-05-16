@@ -9,6 +9,7 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
   final int id = 0;
+  double _value=0.5;
 
   void updateState(int index, BuildContext context) {
     if (index != 2) {
@@ -32,13 +33,11 @@ class SettingsPageState extends State<SettingsPage> {
         ,
           child: Padding(padding: EdgeInsets.all(16.0),
           child: Column(
+            //mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Wearing days of each shoes',
+              const Text('Modify your humidity rate',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
               const SizedBox(height: 16),
-              const Text('Humidity Rate',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-                  const SizedBox(height: 16),
                 ]),
           ),
         ),
