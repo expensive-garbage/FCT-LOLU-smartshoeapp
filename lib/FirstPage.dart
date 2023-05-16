@@ -33,6 +33,9 @@ class First extends StatelessWidget {
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
+            Center(
+              child: Image.asset("assets/images/logo.png"),
+            ),
             ElevatedButton(
                 onPressed: () {
                   appState.changeIndexFirstPage(1);
