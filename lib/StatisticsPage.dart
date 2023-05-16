@@ -1,10 +1,7 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-//import 'package:line_chart/charts/line-chart.widget.dart';
-//import 'MyHomePage.dart';
-//import 'MyApp.dart';
+import 'package:namer_app/MyApp.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StatisticsPage extends StatefulWidget {
@@ -25,7 +22,7 @@ class StatisticsPageState extends State<StatisticsPage> {
 
   void updateState(int index, BuildContext context) {
     if (index != 2) {
-      Navigator.pushNamed(context, '/');
+      Navigator.pushNamed(context, '/home');
     }
   }
 
@@ -43,21 +40,31 @@ class StatisticsPageState extends State<StatisticsPage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     int currentIndex = 0;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics',
-                style:TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor:const Color.fromRGBO(25, 131, 123, 1) ,
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color.fromRGBO(25, 131, 123, 1),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Action souhaitée lors de l'appui sur le bouton flèche
+            // Par exemple, pour revenir à l'écran précédent :
+            appState.changeIndexProfilePage(0);
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height,)
-        ,
-          child: Padding(padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: PieChart(
@@ -69,7 +76,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                 ),
               ),
               const Text('Wearing days of each shoes',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+                  style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
               const SizedBox(height: 16),
               Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -88,41 +96,14 @@ class StatisticsPageState extends State<StatisticsPage> {
                           xValueMapper: (ChartData data, _) => data.x,
                           yValueMapper: (ChartData data, _) => data.y)
                     ],
-                  )
-                  ),
+                  )),
               const Text('Humidity Rate',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-                  const SizedBox(height: 16),
-            
-
-                ]),
+                  style:
+                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
+              const SizedBox(height: 16),
+            ]),
           ),
         ),
-        
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (int index) {
-          updateState(index, context);
-        },
-        selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
-        unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view),
-            label: 'Shoe Rack',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          )
-        ],
       ),
     );
   }

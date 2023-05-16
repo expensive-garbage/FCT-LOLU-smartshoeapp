@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyApp.dart';
@@ -11,11 +12,22 @@ class ShoesInformation extends StatefulWidget {
 }
 
 class _ShoesInformationState extends State<ShoesInformation> {
-  final Stream<QuerySnapshot> _shoesStream =
-      FirebaseFirestore.instance.collection('shoe').snapshots();
+  FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    User? user = auth.currentUser;
+    String uid = '';
+    if (user != null) {
+      uid = user.uid;
+      print('L\'UID de l\'utilisateur est: $uid');
+    } else {
+      print('Aucun utilisateur n\'est actuellement authentifié.');
+    }
+    final Stream<QuerySnapshot> _shoesStream = FirebaseFirestore.instance
+        .collection('shoe')
+        .where('IdUser', isEqualTo: uid)
+        .snapshots();
     var appState = context.watch<MyAppState>();
     return StreamBuilder<QuerySnapshot>(
       stream: _shoesStream,
@@ -23,11 +35,9 @@ class _ShoesInformationState extends State<ShoesInformation> {
         if (snapshot.hasError) {
           return const Text('Something went wrong');
         }
-
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("Loading");
         }
-
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -47,7 +57,7 @@ class _ShoesInformationState extends State<ShoesInformation> {
                         appState.changeBrandShoe(data['Brand']);
                         appState.changeColorsShoe(data['Colors']);
                         appState.changeWaterproofShoe(data['Waterproof']);
-                        appState.changeSeasonShoe(data['Season']);
+                        appState.changeSeasonShoe(data['Seasons']);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromRGBO(
@@ -80,7 +90,9 @@ class _ShoesInformationState extends State<ShoesInformation> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  appState.changeActualShoe("");
                   appState.changeNbShoes(appState.nbShoes + 1);
+                  appState.changeIndexMyHomePage(3);
                 },
                 child: const Text('Add a shoe'),
               ),

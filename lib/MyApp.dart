@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/FirstPage.dart';
 import 'package:namer_app/ProfilePage.dart';
 import 'package:namer_app/ShoePage.dart';
 import 'package:provider/provider.dart';
@@ -21,9 +22,10 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
-          '/': (context) => MyHomePage(),
+          "/home": (context) => MyHomePage(),
+          '/': (context) => FirstPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
-          '/profile': (context) => const ProfilePage(),
+          '/profile': (context) => ProfilePage(),
         },
       ),
     );
@@ -47,6 +49,7 @@ class MyAppState extends ChangeNotifier {
 
   var indexMyHomePage = 0;
   var indexProfilePage = 0;
+  var indexFirstPage = 0;
 
   //define the functions that change the data
   void changeIndexMyHomePage(int index) {
@@ -56,6 +59,11 @@ class MyAppState extends ChangeNotifier {
 
   void changeIndexProfilePage(int index) {
     indexProfilePage = index;
+    notifyListeners();
+  }
+
+  void changeIndexFirstPage(int index) {
+    indexFirstPage = index;
     notifyListeners();
   }
 

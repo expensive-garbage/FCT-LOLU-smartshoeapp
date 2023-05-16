@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/AddShoePage.dart';
 
 import 'package:namer_app/ShoeInformation.dart';
 
@@ -8,34 +9,23 @@ import 'MyApp.dart';
 
 import 'HomePage.dart';
 
-import 'ShoeRackPage.dart';
 import 'ShoePage.dart';
 
 import 'ProfilePage.dart';
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void updateState(int index) {
-    setState(() {
-      if (index == 2) {
-        Navigator.pushNamed(context, '/profile');
-      }
-    });
-  }
-
-  int _currentIndex = 0;
-
   final List<Widget> _children = [
     HomePage(),
-    ShoesInformation(),
+    const ShoesInformation(),
     ProfilePage(),
-    ShoeRackPage(
-      key: shoeRackPageStateeKey,
-    )
+    AddShoePage(),
   ];
 
   @override
@@ -51,8 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              updateState(2);
+              appState.changeIndexMyHomePage(2);
               appState.changeActualShoe("");
+              Navigator.pushNamed(context, '/profile');
             },
           ),
         ],
@@ -61,15 +52,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ? _children[currentIndex]
           : ShoePage(id: appState.actualShoe),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex:
+            appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
+          appState.changeActualShoe("");
           if (index == 2) {
-            updateState(2);
+            appState.changeIndexMyHomePage(2);
+            Navigator.pushNamed(context, '/profile');
           } else {
             appState.changeIndexMyHomePage(index);
           }
-          appState.changeActualShoe("");
         },
         selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
         unselectedItemColor: Colors.grey,
@@ -95,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class ShoeRackPage extends StatefulWidget {
-  ShoeRackPage({Key? key}) : super(key: key);
+  const ShoeRackPage({Key? key}) : super(key: key);
 
   @override
   State<ShoeRackPage> createState() => _ShoeRackPageState();
@@ -116,17 +109,16 @@ class _ShoeRackPageState extends State<ShoeRackPage> {
             ElevatedButton(
                 onPressed: () {
                   //go to shoe page by changing the index of the children of the scaffold
-                  print('button pressed!');
                   appState.changeActualShoe("lol");
                 },
                 child: Text('Shoe $i')),
 
           ElevatedButton(
               onPressed: () {
-                print('button pressed!');
                 appState.changeNbShoes(appState.nbShoes + 1);
+                appState.changeIndexMyHomePage(3);
               },
-              child: Text('Add a shoe'))
+              child: const Text('Add a shoe'))
         ],
       ),
     );
