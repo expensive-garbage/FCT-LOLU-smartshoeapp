@@ -146,6 +146,8 @@ class _SignupState extends State<Signup> {
                           user.doc(credential.user!.uid).set({
                             'PhotoURL': photoURL,
                             'Name': name,
+                            'Temperature Threshold': 20,
+                            'Humidity Rate Threshold':60,
                           }).then((value) {
                             print('Document ajouté avec succès');
                           }).catchError((error) {
