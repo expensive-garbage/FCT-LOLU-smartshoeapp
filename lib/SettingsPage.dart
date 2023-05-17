@@ -16,29 +16,33 @@ class SettingsPageState extends State<SettingsPage> {
   final int id = 0;
   double currentHumidityRate = 20.0;
   double currentTemperature = 60.0;
-
+  String currentName = '';
+  String currentAdress = '';
+  String currentPassword = '';
   void updateState(int index, BuildContext context) {
     if (index != 2) {
       Navigator.pushNamed(context, '/home');
     }
   }
 
-   Future<void> fetchValuesFromDatabase() async {
+  Future<void> fetchValuesFromDatabase() async {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     final databaseReference = FirebaseFirestore.instance;
-    final documentSnapshot = await databaseReference
-        .collection('user')
-        .doc(firebaseUser!.uid)
-        .get();
+    final documentSnapshot =
+        await databaseReference.collection('user').doc(firebaseUser!.uid).get();
 
     if (documentSnapshot.exists) {
       final data = documentSnapshot.data();
       setState(() {
-        currentHumidityRate = data!['Humidity Rate Threshold'] ?? 20.0;
+        currentName = data!['Name'] ?? '';
+        currentHumidityRate = data['Humidity Rate Threshold'] ?? 20.0;
         currentTemperature = data['Temperature Threshold'] ?? 60.0;
+        currentAdress = data['email'] ?? '';
+        currentPassword = data['password'] ?? '';
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -47,9 +51,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     var appState = context.watch<MyAppState>();
-  
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings',
@@ -111,19 +114,247 @@ class SettingsPageState extends State<SettingsPage> {
               Text('Selected: $currentTemperature'),
               SizedBox(height: 30),
               ElevatedButton(
-                onPressed: () async {
-                  final firebaseUser = FirebaseAuth.instance.currentUser;
-                  final databaseReference = FirebaseFirestore.instance;
-                  final collectionReference = databaseReference.collection('user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
-                  
-                  await collectionReference.doc(firebaseUser!.uid).update({
-                    'Humidity Rate Threshold': currentHumidityRate,
-                    'Temperature Threshold': currentTemperature,
-                  });
+                  onPressed: () async {
+                    final firebaseUser = FirebaseAuth.instance.currentUser;
+                    final databaseReference = FirebaseFirestore.instance;
+                    final collectionReference = databaseReference.collection(
+                        'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
 
-                  print('Database updated successfully!');
-                },
-                child: const Text("Validation"))
+                    await collectionReference.doc(firebaseUser!.uid).update({
+                      'Humidity Rate Threshold': currentHumidityRate,
+                      'Temperature Threshold': currentTemperature,
+                    });
+
+                    print('Database updated successfully!');
+                  },
+                  child: const Text("Validation")),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.mail,
+                    size: 40,
+                    color: Color.fromRGBO(25, 131, 123, 1),
+                  ),
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Modify your mail address',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Modify your mail address'),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Form(
+                                  child: Column(
+                                    children: <Widget>[
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'New mail address',
+                                          hintText: currentAdress,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          icon: Icon(Icons.mail_lock),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor:
+                            const Color.fromARGB(255, 219, 129, 129)),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 20,
+                      color: Color.fromRGBO(202, 171, 236, 0.8),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.password,
+                    size: 40,
+                    color: Color.fromRGBO(25, 131, 123, 1),
+                  ),
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Modify your password',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Modify your password'),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Form(
+                                  child: Column(
+                                    children: <Widget>[
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'New Password',
+                                          hintText: currentPassword,
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          icon: Icon(Icons.password),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor:
+                            const Color.fromARGB(255, 219, 129, 129)),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 20,
+                      color: Color.fromRGBO(202, 171, 236, 0.8),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.image_search,
+                    size: 40,
+                    color: Color.fromRGBO(25, 131, 123, 1),
+                  ),
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Modify your profile picture',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Modify your profile picture'),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Form(
+                                  child: Column(
+                                    children: <Widget>[
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'New Profile picture',
+                                          icon: Icon(Icons.image_search),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor:
+                            const Color.fromARGB(255, 219, 129, 129)),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 20,
+                      color: Color.fromRGBO(202, 171, 236, 0.8),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.text_fields,
+                    size: 40,
+                    color: Color.fromRGBO(25, 131, 123, 1),
+                  ),
+                  const SizedBox(width: 20),
+                  const Text(
+                    'Modify your name',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  const Expanded(child: SizedBox()),
+                  ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Modify your name'),
+                              content: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Form(
+                                  child: Column(
+                                    children: <Widget>[
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'New name',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          hintText: currentName,
+                                          icon: Icon(Icons.people),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(20),
+                        backgroundColor:
+                            const Color.fromARGB(255, 219, 129, 129)),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 20,
+                      color: Color.fromRGBO(202, 171, 236, 0.8),
+                    ),
+                  ),
+                ],
+              )
             ]),
           ),
         ),
