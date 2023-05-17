@@ -17,8 +17,11 @@ class SettingsPageState extends State<SettingsPage> {
   double currentHumidityRate = 20.0;
   double currentTemperature = 60.0;
   String currentName = '';
-  String currentAdress = '';
+  String? currentAdress = '';
   String currentPassword = '';
+  String newPassword = '';
+  String newName = '';
+  String newAdress = '';
   void updateState(int index, BuildContext context) {
     if (index != 2) {
       Navigator.pushNamed(context, '/home');
@@ -37,8 +40,7 @@ class SettingsPageState extends State<SettingsPage> {
         currentName = data!['Name'] ?? '';
         currentHumidityRate = data['Humidity Rate Threshold'] ?? 20.0;
         currentTemperature = data['Temperature Threshold'] ?? 60.0;
-        currentAdress = data['email'] ?? '';
-        currentPassword = data['password'] ?? '';
+        currentAdress = FirebaseAuth.instance.currentUser?.email;
       });
     }
   }
@@ -94,6 +96,21 @@ class SettingsPageState extends State<SettingsPage> {
               SizedBox(height: 16),
               Text('Selected: $currentHumidityRate'),
               SizedBox(height: 16),
+              ElevatedButton(
+                  onPressed: () async {
+                    final firebaseUser = FirebaseAuth.instance.currentUser;
+                    final databaseReference = FirebaseFirestore.instance;
+                    final collectionReference = databaseReference.collection(
+                        'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+
+                    await collectionReference.doc(firebaseUser!.uid).update({
+                      'Humidity Rate Threshold': currentHumidityRate,
+                    });
+
+                    print('Database updated successfully!');
+                  },
+                  child: const Text("Validation")),
+              SizedBox(height: 20),
               const Text('Choose your temperature threshold',
                   style:
                       TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
@@ -112,7 +129,7 @@ class SettingsPageState extends State<SettingsPage> {
               ),
               SizedBox(height: 16),
               Text('Selected: $currentTemperature'),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
               ElevatedButton(
                   onPressed: () async {
                     final firebaseUser = FirebaseAuth.instance.currentUser;
@@ -121,7 +138,6 @@ class SettingsPageState extends State<SettingsPage> {
                         'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
 
                     await collectionReference.doc(firebaseUser!.uid).update({
-                      'Humidity Rate Threshold': currentHumidityRate,
                       'Temperature Threshold': currentTemperature,
                     });
 
@@ -129,6 +145,11 @@ class SettingsPageState extends State<SettingsPage> {
                   },
                   child: const Text("Validation")),
               const SizedBox(height: 20),
+              const Text(
+                'Modifications',
+                style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+              const SizedBox(height: 15),
               Row(
                 children: [
                   const Icon(
@@ -138,7 +159,7 @@ class SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'Modify your mail address',
+                    'Mail address',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                   ),
@@ -149,7 +170,7 @@ class SettingsPageState extends State<SettingsPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Modify your mail address'),
+                              title: const Text('Modify my mail address'),
                               content: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Form(
@@ -165,7 +186,34 @@ class SettingsPageState extends State<SettingsPage> {
                                           ),
                                           icon: Icon(Icons.mail_lock),
                                         ),
+                                        onChanged: (value) => newAdress = value,
                                       ),
+                                      SizedBox(height:20),
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'Enter your password',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          icon: Icon(Icons.password),
+                                        ),
+                                        onChanged: (value) => currentPassword = value,
+                                      ),
+                                      SizedBox(height: 20),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            final user = FirebaseAuth.instance.currentUser;
+                                            final cred =EmailAuthProvider.credential(email: user!.email!,password: currentPassword);
+                                            user.reauthenticateWithCredential(cred).then((value) {
+                                              user.updateEmail(newAdress).then((_) {
+                                                print("sucess mail updated");
+                                              }).catchError((error) {
+                                                print("fail mail updated");
+                                              });
+                                            }).catchError((err) {});
+                                          },
+                                          child: const Text("Validation"))
                                     ],
                                   ),
                                 ),
@@ -196,7 +244,7 @@ class SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'Modify your password',
+                    'Password',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                   ),
@@ -215,15 +263,57 @@ class SettingsPageState extends State<SettingsPage> {
                                     children: <Widget>[
                                       TextFormField(
                                         decoration: InputDecoration(
-                                          labelText: 'New Password',
-                                          hintText: currentPassword,
+                                          labelText: 'Former Password',
+                                          hintText:
+                                              'Insert former password',
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
                                           ),
                                           icon: Icon(Icons.password),
                                         ),
+                                        onChanged: (value) =>
+                                            currentPassword = value,
                                       ),
+                                      SizedBox(height: 20),
+                                      TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: 'New Password',
+                                          hintText: 'Insert new password',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(50.0),
+                                          ),
+                                          icon: Icon(Icons.password),
+                                        ),
+                                        onChanged: (value) =>
+                                            newPassword = value,
+                                      ),
+                                      SizedBox(height: 20),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            final user = FirebaseAuth
+                                                .instance.currentUser;
+                                            final cred =
+                                                EmailAuthProvider.credential(
+                                                    email: user!.email!,
+                                                    password: currentPassword);
+                                            user
+                                                .reauthenticateWithCredential(
+                                                    cred)
+                                                .then((value) {
+                                              user
+                                                  .updatePassword(newPassword)
+                                                  .then((_) {
+                                                print("sucess");
+                                                //Success, do something
+                                              }).catchError((error) {
+                                                print("fail");
+                                                //Error, show something
+                                              });
+                                            }).catchError((err) {});
+                                          },
+                                          child: const Text("Validation"))
                                     ],
                                   ),
                                 ),
@@ -254,7 +344,7 @@ class SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'Modify your profile picture',
+                    'Profile picture',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                   ),
@@ -307,7 +397,7 @@ class SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(width: 20),
                   const Text(
-                    'Modify your name',
+                    'Name',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                   ),
@@ -325,16 +415,38 @@ class SettingsPageState extends State<SettingsPage> {
                                   child: Column(
                                     children: <Widget>[
                                       TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'New name',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
+                                          decoration: InputDecoration(
+                                            labelText: 'New name',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            hintText: currentName,
+                                            icon: Icon(Icons.people),
                                           ),
-                                          hintText: currentName,
-                                          icon: Icon(Icons.people),
-                                        ),
-                                      ),
+                                          onChanged: (value) =>
+                                              newName = value),
+                                      SizedBox(height: 20),
+                                      ElevatedButton(
+                                          onPressed: () async {
+                                            final firebaseUser = FirebaseAuth
+                                                .instance.currentUser;
+                                            final databaseReference =
+                                                FirebaseFirestore.instance;
+                                            final collectionReference =
+                                                databaseReference.collection(
+                                                    'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+
+                                            await collectionReference
+                                                .doc(firebaseUser!.uid)
+                                                .update({
+                                              'Name': newName,
+                                            });
+
+                                            print(
+                                                'Database updated successfully!');
+                                          },
+                                          child: const Text("Validation")),
                                     ],
                                   ),
                                 ),
