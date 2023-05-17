@@ -75,8 +75,8 @@ class HomePage extends StatelessWidget {
                         appState.changeSeasonShoe(data['Seasons']);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(
-                            25, 131, 123, 1), // Set the background color
+                        backgroundColor: const Color.fromARGB(
+                            255, 4, 104, 130), // Set the background color
                         foregroundColor: Colors.grey, // Set the text color
                         //padding: const EdgeInsets.all(1),
                         shape: RoundedRectangleBorder(

@@ -17,6 +17,7 @@ class FirstPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor:const Color.fromARGB(255, 4, 104, 130),
       body: _children[context.watch<MyAppState>().indexFirstPage],
     );
   }

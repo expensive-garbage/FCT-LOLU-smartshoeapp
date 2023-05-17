@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
           appState.indexMyHomePage = index;
           updateState(index, context);
         },
-        selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
+        selectedItemColor: const Color.fromARGB(255, 4, 104, 130),
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
@@ -109,7 +109,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
             child: Column(
               children: [
                 Container(
-                  color: const Color.fromRGBO(25, 131, 123, 1),
+                  color: const Color.fromARGB(255, 4, 104, 130),
                   child: Center(
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +140,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     const Icon(
                       Icons.show_chart,
                       size: 40,
-                      color: Color.fromRGBO(25, 131, 123, 1),
+                      color: Color.fromARGB(255, 4, 104, 130),
                     ),
                     const SizedBox(width: 20),
                     const Text(
@@ -169,7 +169,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     const Icon(
                       Icons.settings,
                       size: 40,
-                      color: Color.fromRGBO(25, 131, 123, 1),
+                      color: Color.fromARGB(255, 4, 104, 130),
                     ),
                     const SizedBox(width: 20),
                     const Text(
@@ -199,7 +199,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     const Icon(
                       Icons.people,
                       size: 40,
-                      color: Color.fromRGBO(25, 131, 123, 1),
+                      color: Color.fromARGB(255, 4, 104, 130),
                     ),
                     const SizedBox(width: 20),
                     const Text(

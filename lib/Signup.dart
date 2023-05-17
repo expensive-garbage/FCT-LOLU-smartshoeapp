@@ -81,98 +81,101 @@ class _SignupState extends State<Signup> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 150,
-                width: 200,
-                child: Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ElevatedButton(
-                      onPressed: _getImage,
-                      child: _imageFile == null
-                          ? const Text('Add a profile image')
-                          : Image.file(_imageFile!),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 150,
+                  width: 200,
+                  child: Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: _getImage,
+                        child: _imageFile == null
+                            ? const Text('Add a profile image')
+                            : Image.file(_imageFile!),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: myNameController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Name',
-                      hintText: 'John Doe'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: myEmailController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'e-mail address',
-                      hintText: 'abc@gmail.com'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: myPasswordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Password',
-                      hintText: 'password'),
-                ),
-              ),
-              Padding(
+                Padding(
                   padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        emailAddress = myEmailController.text;
-                        password = myPasswordController.text;
-                        name = myNameController.text;
-                        photoURL = await uploadImage();
-                        try {
-                          final credential = await FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                            email: emailAddress,
-                            password: password,
-                          );
-                          user.doc(credential.user!.uid).set({
-                            'PhotoURL': photoURL,
-                            'Name': name,
-                            'Temperature Threshold': 20,
-                            'Humidity Rate Threshold':60,
-                          }).then((value) {
-                            print('Document ajouté avec succès');
-                          }).catchError((error) {
-                            print(
-                                'Erreur lors de l\'ajout du document: $error');
-                          });
-                          Navigator.pushNamed(context, '/home');
-                          appState.changeIndexFirstPage(0);
-                        } on FirebaseAuthException catch (e) {
-                          if (e.code == 'weak-password' ||
-                              e.code == 'email-already-in-use') {
-                            print('The password provided is too weak.');
-                            print('The account already exists for that email.');
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildPopupDialog(context),
+                  child: TextField(
+                    controller: myNameController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Name',
+                        hintText: 'John Doe'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: TextField(
+                    controller: myEmailController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'e-mail address',
+                        hintText: 'abc@gmail.com'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: TextField(
+                    controller: myPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        hintText: 'password'),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          emailAddress = myEmailController.text;
+                          password = myPasswordController.text;
+                          name = myNameController.text;
+                          photoURL = await uploadImage();
+                          try {
+                            final credential = await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                              email: emailAddress,
+                              password: password,
                             );
+                            user.doc(credential.user!.uid).set({
+                              'PhotoURL': photoURL,
+                              'Name': name,
+                              'Temperature Threshold': 20,
+                              'Humidity Rate Threshold': 60,
+                            }).then((value) {
+                              print('Document ajouté avec succès');
+                            }).catchError((error) {
+                              print(
+                                  'Erreur lors de l\'ajout du document: $error');
+                            });
+                            Navigator.pushNamed(context, '/home');
+                            appState.changeIndexFirstPage(0);
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'weak-password' ||
+                                e.code == 'email-already-in-use') {
+                              print('The password provided is too weak.');
+                              print(
+                                  'The account already exists for that email.');
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildPopupDialog(context),
+                              );
+                            }
+                          } catch (e) {
+                            print(e);
                           }
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: const Text("Sign up"))),
-            ],
+                        },
+                        child: const Text("Sign up"))),
+              ],
+            ),
           ),
         ),
       ),

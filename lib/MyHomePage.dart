@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
             appState.changeIndexMyHomePage(index);
           }
         },
-        selectedItemColor: const Color.fromRGBO(25, 131, 123, 1),
+        selectedItemColor: const Color.fromARGB(255, 4, 104, 130),
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),

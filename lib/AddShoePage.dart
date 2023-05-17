@@ -115,37 +115,31 @@ class _AddShoePageState extends State<AddShoePage> {
                 ),
               ),
             ),
-            TextFormField(
+            TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'please enter name';
-                }
-                return null;
-              },
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Name',
+                  hintText: 'Running shoes n°1'),
             ),
-            TextFormField(
+            TextField(
               controller: brandController,
-              decoration: const InputDecoration(labelText: 'Brand'),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'please enter brand';
-                }
-                return null;
-              },
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Brand',
+                  hintText: 'Veja'),
             ),
-            Text("Seasons"),
+            const Text("Seasons"),
             ToggleButtons(
-              children: _seasons.map((season) => Text(season)).toList(),
               isSelected: _seasonSelected,
               onPressed: (int index) {
                 setState(() {
                   _seasonSelected[index] = !_seasonSelected[index];
                 });
               },
+              children: _seasons.map((season) => Text(season)).toList(),
             ),
-            Text('This shoe is :'),
+            const Text('This shoe is :'),
             ElevatedButton(
               child: Text(_isWaterproof ? 'Waterproof' : 'Not Waterproof'),
               onPressed: () {
@@ -154,19 +148,18 @@ class _AddShoePageState extends State<AddShoePage> {
                 });
               },
             ),
-            Text("Colors"),
+            const Text("Colors"),
             Wrap(
               children: _colors
                   .asMap()
                   .map((index, color) => MapEntry(
                       index,
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: ElevatedButton(
-                          child: Text(color),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _colorSelected[index]
-                                ? Color.fromARGB(255, 246, 144, 121)
+                                ? const Color.fromARGB(255, 246, 144, 121)
                                 : null,
                           ),
                           onPressed: () {
@@ -174,12 +167,13 @@ class _AddShoePageState extends State<AddShoePage> {
                               _colorSelected[index] = !_colorSelected[index];
                             });
                           },
+                          child: Text(color),
                         ),
                       )))
                   .values
                   .toList(),
             ),
-            Text('Type'),
+            const Text('Type'),
             DropdownButton<String>(
               value: 'Sneaker',
               onChanged: (String? newValue) {

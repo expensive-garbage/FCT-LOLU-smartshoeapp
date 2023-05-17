@@ -33,56 +33,58 @@ class _LoginState extends State<Login> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  controller: myEmailController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'e-mail address',
-                      hintText: 'abc@gmail.com'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextField(
-                  obscureText: true,
-                  controller: myPasswordController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Password',
-                      hintText: 'password'),
-                ),
-              ),
-              Padding(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.all(10),
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        emailAddress = myEmailController.text;
-                        password = myPasswordController.text;
-                        try {
-                          final credential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: emailAddress, password: password);
-                          Navigator.pushNamed(context, '/home');
-                          appState.changeIndexFirstPage(0);
-                        } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found' ||
-                              e.code == 'wrong-password') {
-                            print('No user found for that email.');
-                            print('Wrong password provided for that user.');
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) =>
-                                  _buildPopupDialog(context),
-                            );
+                  child: TextField(
+                    controller: myEmailController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'e-mail address',
+                        hintText: 'abc@gmail.com'),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: TextField(
+                    obscureText: true,
+                    controller: myPasswordController,
+                    decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Password',
+                        hintText: 'password'),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          emailAddress = myEmailController.text;
+                          password = myPasswordController.text;
+                          try {
+                            final credential = await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: emailAddress, password: password);
+                            Navigator.pushNamed(context, '/home');
+                            appState.changeIndexFirstPage(0);
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'user-not-found' ||
+                                e.code == 'wrong-password') {
+                              print('No user found for that email.');
+                              print('Wrong password provided for that user.');
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    _buildPopupDialog(context),
+                              );
+                            }
                           }
-                        }
-                      },
-                      child: const Text("log in"))),
-            ],
+                        },
+                        child: const Text("log in"))),
+              ],
+            ),
           ),
         ),
       ),
