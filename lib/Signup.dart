@@ -138,13 +138,18 @@ class _SignupState extends State<Signup> {
                           password = myPasswordController.text;
                           name = myNameController.text;
                           photoURL = await uploadImage();
-                          try {
-                            final credential = await FirebaseAuth.instance
-                                .createUserWithEmailAndPassword(
-                              email: emailAddress,
-                              password: password,
-                            );
-                            user.doc(credential.user!.uid).set({
+                          FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailAddress,
+                            password: password,
+                          )
+                              .then((UserCredential userCredential) {
+                            // L'utilisateur s'est connecté avec succès
+                            // Mettez ici votre logique de redirection vers la page principale, par exemple :
+                            print('uid: ' + userCredential.user!.uid);
+                            appState.uid = userCredential.user!.uid;
+                            appState.changeIndexFirstPage(0);
+                            user.doc(appState.uid).set({
                               'PhotoURL': photoURL,
                               'Name': name,
                               'Temperature Threshold': 20,
@@ -155,23 +160,25 @@ class _SignupState extends State<Signup> {
                               print(
                                   'Erreur lors de l\'ajout du document: $error');
                             });
-                            Navigator.pushNamed(context, '/home');
-                            appState.changeIndexFirstPage(0);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password' ||
-                                e.code == 'email-already-in-use') {
-                              print('The password provided is too weak.');
-                              print(
-                                  'The account already exists for that email.');
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _buildPopupDialog(context),
-                              );
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
+                          }).catchError((e) {
+                            // Une erreur s'est produite lors de la connexion de l'utilisateur
+                            // Gérez ici l'affichage d'un message d'erreur à l'utilisateur, par exemple :
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Erreur de connexion'),
+                                content: Text('Vérifiez vos identifiants.'),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          });
                         },
                         child: const Text("Sign up"))),
               ],
@@ -181,25 +188,4 @@ class _SignupState extends State<Signup> {
       ),
     );
   }
-}
-
-Widget _buildPopupDialog(BuildContext context) {
-  return AlertDialog(
-    title: const Text('Authentification failed'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const <Widget>[
-        Text("already used email or weak password."),
-      ],
-    ),
-    actions: <Widget>[
-      ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        child: const Text('Close'),
-      ),
-    ],
-  );
 }
