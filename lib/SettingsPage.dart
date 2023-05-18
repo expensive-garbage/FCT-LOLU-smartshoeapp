@@ -59,7 +59,7 @@ class SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: const Text('Settings',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromRGBO(25, 131, 123, 1),
+        backgroundColor: const Color.fromARGB(255, 4, 104, 130),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -147,15 +147,15 @@ class SettingsPageState extends State<SettingsPage> {
               const SizedBox(height: 20),
               const Text(
                 'Modifications',
-                style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 15),
               Row(
                 children: [
                   const Icon(
                     Icons.mail,
                     size: 40,
-                    color: Color.fromRGBO(25, 131, 123, 1),
+                    color: Color.fromARGB(255, 4, 104, 130),
                   ),
                   const SizedBox(width: 20),
                   const Text(
@@ -188,7 +188,7 @@ class SettingsPageState extends State<SettingsPage> {
                                         ),
                                         onChanged: (value) => newAdress = value,
                                       ),
-                                      SizedBox(height:20),
+                                      SizedBox(height: 20),
                                       TextFormField(
                                         decoration: InputDecoration(
                                           labelText: 'Enter your password',
@@ -198,15 +198,25 @@ class SettingsPageState extends State<SettingsPage> {
                                           ),
                                           icon: Icon(Icons.password),
                                         ),
-                                        onChanged: (value) => currentPassword = value,
+                                        onChanged: (value) =>
+                                            currentPassword = value,
                                       ),
                                       SizedBox(height: 20),
                                       ElevatedButton(
                                           onPressed: () async {
-                                            final user = FirebaseAuth.instance.currentUser;
-                                            final cred =EmailAuthProvider.credential(email: user!.email!,password: currentPassword);
-                                            user.reauthenticateWithCredential(cred).then((value) {
-                                              user.updateEmail(newAdress).then((_) {
+                                            final user = FirebaseAuth
+                                                .instance.currentUser;
+                                            final cred =
+                                                EmailAuthProvider.credential(
+                                                    email: user!.email!,
+                                                    password: currentPassword);
+                                            user
+                                                .reauthenticateWithCredential(
+                                                    cred)
+                                                .then((value) {
+                                              user
+                                                  .updateEmail(newAdress)
+                                                  .then((_) {
                                                 print("sucess mail updated");
                                               }).catchError((error) {
                                                 print("fail mail updated");
@@ -240,7 +250,7 @@ class SettingsPageState extends State<SettingsPage> {
                   const Icon(
                     Icons.password,
                     size: 40,
-                    color: Color.fromRGBO(25, 131, 123, 1),
+                    color: Color.fromARGB(255, 4, 104, 130),
                   ),
                   const SizedBox(width: 20),
                   const Text(
@@ -264,8 +274,7 @@ class SettingsPageState extends State<SettingsPage> {
                                       TextFormField(
                                         decoration: InputDecoration(
                                           labelText: 'Former Password',
-                                          hintText:
-                                              'Insert former password',
+                                          hintText: 'Insert former password',
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(50.0),
@@ -340,7 +349,7 @@ class SettingsPageState extends State<SettingsPage> {
                   const Icon(
                     Icons.image_search,
                     size: 40,
-                    color: Color.fromRGBO(25, 131, 123, 1),
+                    color: Color.fromARGB(255, 4, 104, 130),
                   ),
                   const SizedBox(width: 20),
                   const Text(
@@ -393,7 +402,7 @@ class SettingsPageState extends State<SettingsPage> {
                   const Icon(
                     Icons.text_fields,
                     size: 40,
-                    color: Color.fromRGBO(25, 131, 123, 1),
+                    color: Color.fromARGB(255, 4, 104, 130),
                   ),
                   const SizedBox(width: 20),
                   const Text(

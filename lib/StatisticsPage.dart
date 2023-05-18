@@ -47,7 +47,7 @@ class StatisticsPageState extends State<StatisticsPage> {
       appBar: AppBar(
         title: const Text('Statistics',
             style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromRGBO(25, 131, 123, 1),
+        backgroundColor: const Color.fromARGB(255, 4, 104, 130),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {

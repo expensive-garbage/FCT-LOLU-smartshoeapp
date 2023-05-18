@@ -211,9 +211,9 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                     ElevatedButton(
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
-                        appState.changeIndexMyHomePage(0);
+                        appState.indexMyHomePage = 0;
                         Navigator.pushNamed(context, '/');
-                        appState.changeIndexProfilePage(0);
+                        appState.indexProfilePage = 0;
                       },
                       style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
