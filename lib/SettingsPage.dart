@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'MyApp.dart';
 
@@ -13,6 +17,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
+
   final int id = 0;
   double currentHumidityRate = 20.0;
   double currentTemperature = 60.0;
@@ -22,10 +27,36 @@ class SettingsPageState extends State<SettingsPage> {
   String newPassword = '';
   String newName = '';
   String newAdress = '';
+  String newImage = '';
+
+  File? _imageFile;
+
   void updateState(int index, BuildContext context) {
     if (index != 2) {
       Navigator.pushNamed(context, '/home');
     }
+  }
+
+  Future<String> uploadImage() async {
+    if (_imageFile != null) {
+      try {
+        final storageRef = FirebaseStorage.instance.ref();
+        Reference? imagesRef = storageRef
+            .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+        // Uploader le fichier sur Firebase Storage
+        await imagesRef.putFile(_imageFile!);
+
+        // Récupérer l'URL de téléchargement de l'image
+        String downloadURL = await imagesRef.getDownloadURL();
+
+        // Faire quelque chose avec l'URL de téléchargement, comme l'afficher dans l'application
+        print('Image uploaded: $downloadURL');
+        return downloadURL;
+      } catch (e) {
+        print('Error uploading image to Firebase Storage: $e');
+      }
+    }
+    return '';
   }
 
   Future<void> fetchValuesFromDatabase() async {
@@ -43,6 +74,15 @@ class SettingsPageState extends State<SettingsPage> {
         currentAdress = FirebaseAuth.instance.currentUser?.email;
       });
     }
+  }
+  Future<void> _getImage() async {
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+
+    setState(() {
+      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
+    });
   }
 
   @override
@@ -370,19 +410,38 @@ class SettingsPageState extends State<SettingsPage> {
                                 child: Form(
                                   child: Column(
                                     children: <Widget>[
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'New Profile picture',
-                                          icon: Icon(Icons.image_search),
-                                        ),
-                                      ),
+                                      SizedBox(
+                                            height: 150,
+                                            width: 200,
+                                            child: Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(10),
+                                                child: ElevatedButton(
+                                                  onPressed: _getImage,
+                                                  child: _imageFile == null
+                                                      ? const Text('Add a profile image')
+                                                      : Image.file(_imageFile!),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ElevatedButton(
+                                      onPressed: () async {
+                                        newImage = await uploadImage();
+                                        final firebaseUser = FirebaseAuth.instance.currentUser;
+                                        final databaseReference =FirebaseFirestore.instance;
+                                        final collectionReference =databaseReference.collection('user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+                                        await collectionReference.doc(firebaseUser!.uid).update({'PhotoURL': newImage,});
+                                        print('Database updated successfully!');
+                                      },
+                                      child: const Text("Validation"))
                                     ],
                                   ),
                                 ),
                               ),
                             );
                           });
-                    },
+                                        },
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(20),
