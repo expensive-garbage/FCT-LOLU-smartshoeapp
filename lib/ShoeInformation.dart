@@ -78,10 +78,10 @@ class _ShoesInformationState extends State<ShoesInformation> {
                           ),
                           Text(data['Name'],
                               style: const TextStyle(
-                                  color: Colors.black, fontSize: 20)),
+                                  color: Colors.white, fontSize: 20)),
                           Text(data['Brand'],
                               style: const TextStyle(
-                                  color: Colors.black, fontSize: 20)),
+                                  color: Colors.white, fontSize: 20)),
                         ],
                       ),
                     ),
