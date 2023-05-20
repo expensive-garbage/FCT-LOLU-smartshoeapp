@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/FirstPage.dart';
 import 'package:namer_app/ProfilePage.dart';
@@ -6,7 +8,12 @@ import 'package:provider/provider.dart';
 
 import 'MyHomePage.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -23,7 +30,9 @@ class MyApp extends StatelessWidget {
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
           "/home": (context) => MyHomePage(),
-          '/': (context) => FirstPage(),
+          '/': (context) => context.watch<MyAppState>().uid != ''
+              ? MyHomePage()
+              : FirstPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/profile': (context) => ProfilePage(),
         },
@@ -34,7 +43,7 @@ class MyApp extends StatelessWidget {
 
 class MyAppState extends ChangeNotifier {
   //define the data the app needs to function
-  var season = 'Spring';
+  var season = "Spring";
 
   //a suprr
   var nbShoes = 5;
@@ -50,6 +59,20 @@ class MyAppState extends ChangeNotifier {
   var indexMyHomePage = 0;
   var indexProfilePage = 0;
   var indexFirstPage = 0;
+
+  var auth = FirebaseAuth.instance;
+  var uid = '';
+
+  checkiflogged() async {
+    auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        uid = user.uid;
+      } else {
+        uid = '';
+      }
+    });
+    notifyListeners();
+  }
 
   //define the functions that change the data
   void changeIndexMyHomePage(int index) {

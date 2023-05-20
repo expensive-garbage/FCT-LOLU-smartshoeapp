@@ -63,24 +63,35 @@ class _LoginState extends State<Login> {
                         onPressed: () async {
                           emailAddress = myEmailController.text;
                           password = myPasswordController.text;
-                          try {
-                            final credential = await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: emailAddress, password: password);
-                            Navigator.pushNamed(context, '/home');
+                          FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                            email: emailAddress,
+                            password: password,
+                          )
+                              .then((UserCredential userCredential) {
+                            // L'utilisateur s'est connecté avec succès
+                            // Mettez ici votre logique de redirection vers la page principale, par exemple :
+                            appState.checkiflogged();
                             appState.changeIndexFirstPage(0);
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found' ||
-                                e.code == 'wrong-password') {
-                              print('No user found for that email.');
-                              print('Wrong password provided for that user.');
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) =>
-                                    _buildPopupDialog(context),
-                              );
-                            }
-                          }
+                          }).catchError((e) {
+                            // Une erreur s'est produite lors de la connexion de l'utilisateur
+                            // Gérez ici l'affichage d'un message d'erreur à l'utilisateur, par exemple :
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Error of connexion'),
+                                content: Text('Check your credentials'),
+                                actions: [
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          });
                         },
                         child: const Text("log in"))),
               ],
@@ -90,25 +101,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-}
-
-Widget _buildPopupDialog(BuildContext context) {
-  return AlertDialog(
-    title: const Text('Identification failed'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const <Widget>[
-        Text("Wrong email or password."),
-      ],
-    ),
-    actions: <Widget>[
-      ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        child: const Text('Close'),
-      ),
-    ],
-  );
 }

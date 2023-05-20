@@ -5,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:namer_app/MyApp.dart';
-import 'package:provider/provider.dart';
 
 class AddShoePage extends StatefulWidget {
   const AddShoePage({super.key});
