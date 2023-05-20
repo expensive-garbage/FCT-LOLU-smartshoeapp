@@ -42,6 +42,7 @@ class First extends StatelessWidget {
                   appState.changeIndexFirstPage(1);
                 },
                 child: const Text("Log in")),
+            const SizedBox(height: 5),
             ElevatedButton(
                 onPressed: () {
                   appState.changeIndexFirstPage(2);
