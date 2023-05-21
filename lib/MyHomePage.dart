@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/AddShoePage.dart';
+import 'package:namer_app/ChangeShoePage.dart';
 
 import 'package:namer_app/ShoeInformation.dart';
 
@@ -26,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const ShoesInformation(),
     ProfilePage(),
     AddShoePage(),
+    ChangeShoePage(),
   ];
 
   @override
@@ -50,10 +52,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: appState.actualShoe == ""
           ? _children[currentIndex]
-          : ShoePage(id: appState.actualShoe),
+          : appState.change == true
+              ? ChangeShoePage()
+              : ShoePage(id: appState.actualShoe),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex:
-            appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
+            appState.indexMyHomePage == 3 || appState.indexMyHomePage == 4
+                ? 1
+                : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
           appState.changeActualShoe("");
@@ -81,44 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.person),
             label: 'Profile',
           )
-        ],
-      ),
-    );
-  }
-}
-
-class ShoeRackPage extends StatefulWidget {
-  const ShoeRackPage({Key? key}) : super(key: key);
-
-  @override
-  State<ShoeRackPage> createState() => _ShoeRackPageState();
-}
-
-class _ShoeRackPageState extends State<ShoeRackPage> {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var nbShoes = appState.nbShoes;
-
-    return Center(
-      child: Column(
-        children: [
-          //Shoe display
-          //here generate nbShoes buttons in a grille
-          for (var i = 0; i <= nbShoes; i++)
-            ElevatedButton(
-                onPressed: () {
-                  //go to shoe page by changing the index of the children of the scaffold
-                  appState.changeActualShoe("lol");
-                },
-                child: Text('Shoe $i')),
-
-          ElevatedButton(
-              onPressed: () {
-                appState.changeNbShoes(appState.nbShoes + 1);
-                appState.changeIndexMyHomePage(3);
-              },
-              child: const Text('Add a shoe'))
         ],
       ),
     );

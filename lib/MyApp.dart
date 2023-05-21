@@ -63,6 +63,8 @@ class MyAppState extends ChangeNotifier {
   var auth = FirebaseAuth.instance;
   var uid = '';
 
+  var change = false;
+
   checkiflogged() async {
     auth.authStateChanges().listen((User? user) {
       if (user != null) {
@@ -127,6 +129,11 @@ class MyAppState extends ChangeNotifier {
 
   void changePhotoUrlShoe(String url) {
     photoUrlShoe = url;
+    notifyListeners();
+  }
+
+  void changeChange() {
+    change = !change;
     notifyListeners();
   }
 }

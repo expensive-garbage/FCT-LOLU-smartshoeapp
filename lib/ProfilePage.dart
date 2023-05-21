@@ -36,7 +36,9 @@ class _ProfilePageState extends State<ProfilePage> {
       body: _children[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex:
-            appState.indexMyHomePage == 3 ? 1 : appState.indexMyHomePage,
+            appState.indexMyHomePage == 3 || appState.indexMyHomePage == 4
+                ? 1
+                : appState.indexMyHomePage,
         onTap: (int index) {
           // Appeler deux fonctions ici
           appState.changeIndexProfilePage(0);

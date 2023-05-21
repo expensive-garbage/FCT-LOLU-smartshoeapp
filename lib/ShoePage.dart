@@ -200,7 +200,11 @@ class ShoePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          onPressed: () {}, child: const Text("Change Shoe")),
+                          onPressed: () {
+                            appState.changeChange();
+                            appState.changeIndexMyHomePage(4);
+                          },
+                          child: const Text("Change Shoe")),
                       const SizedBox(width: 8.0),
                       ElevatedButton(
                           onPressed: () {
