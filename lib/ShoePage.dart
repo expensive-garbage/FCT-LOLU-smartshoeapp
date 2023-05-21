@@ -76,7 +76,7 @@ class ShoePage extends StatelessWidget {
               const SizedBox(height: 8.0),
               Center(
                   child: photoUrl == ""
-                      ? Text("Any Photo Here")
+                      ? const Text("Any Photo Here")
                       : Image.network(photoUrl, height: 200)),
               const SizedBox(height: 8.0),
               Center(
@@ -126,7 +126,7 @@ class ShoePage extends StatelessWidget {
                       60, // Spécifiez la hauteur souhaitée pour le Container
                   child: Center(
                     child: Container(
-                      padding: EdgeInsets.all(4.0),
+                      padding: const EdgeInsets.all(4.0),
                       child: GridView.builder(
                         itemCount: colors.length,
                         gridDelegate:
@@ -200,13 +200,13 @@ class ShoePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                          onPressed: () {}, child: Text("Change Shoe")),
+                          onPressed: () {}, child: const Text("Change Shoe")),
                       const SizedBox(width: 8.0),
                       ElevatedButton(
                           onPressed: () {
                             deleteShoe();
                           },
-                          child: Text("Delete Shoe"))
+                          child: const Text("Delete Shoe"))
                     ],
                   ),
                 ),

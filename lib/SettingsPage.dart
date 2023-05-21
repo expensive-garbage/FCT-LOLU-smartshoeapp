@@ -17,10 +17,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-
   final int id = 0;
   double currentHumidityRate = 20.0;
-  double currentTemperature = 60.0;
+  double currentTemperature = 25.0;
   String currentName = '';
   String? currentAdress = '';
   String currentPassword = '';
@@ -70,11 +69,12 @@ class SettingsPageState extends State<SettingsPage> {
       setState(() {
         currentName = data!['Name'] ?? '';
         currentHumidityRate = data['Humidity Rate Threshold'] ?? 20.0;
-        currentTemperature = data['Temperature Threshold'] ?? 60.0;
+        currentTemperature = data['Temperature Threshold'] ?? 25.0;
         currentAdress = FirebaseAuth.instance.currentUser?.email;
       });
     }
   }
+
   Future<void> _getImage() async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -411,37 +411,47 @@ class SettingsPageState extends State<SettingsPage> {
                                   child: Column(
                                     children: <Widget>[
                                       SizedBox(
-                                            height: 150,
-                                            width: 200,
-                                            child: Expanded(
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10),
-                                                child: ElevatedButton(
-                                                  onPressed: _getImage,
-                                                  child: _imageFile == null
-                                                      ? const Text('Add a profile image')
-                                                      : Image.file(_imageFile!),
-                                                ),
-                                              ),
+                                        height: 150,
+                                        width: 200,
+                                        child: Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10),
+                                            child: ElevatedButton(
+                                              onPressed: _getImage,
+                                              child: _imageFile == null
+                                                  ? const Text(
+                                                      'Add a profile image')
+                                                  : Image.file(_imageFile!),
                                             ),
                                           ),
+                                        ),
+                                      ),
                                       ElevatedButton(
-                                      onPressed: () async {
-                                        newImage = await uploadImage();
-                                        final firebaseUser = FirebaseAuth.instance.currentUser;
-                                        final databaseReference =FirebaseFirestore.instance;
-                                        final collectionReference =databaseReference.collection('user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
-                                        await collectionReference.doc(firebaseUser!.uid).update({'PhotoURL': newImage,});
-                                        print('Database updated successfully!');
-                                      },
-                                      child: const Text("Validation"))
+                                          onPressed: () async {
+                                            newImage = await uploadImage();
+                                            final firebaseUser = FirebaseAuth
+                                                .instance.currentUser;
+                                            final databaseReference =
+                                                FirebaseFirestore.instance;
+                                            final collectionReference =
+                                                databaseReference.collection(
+                                                    'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+                                            await collectionReference
+                                                .doc(firebaseUser!.uid)
+                                                .update({
+                                              'PhotoURL': newImage,
+                                            });
+                                            print(
+                                                'Database updated successfully!');
+                                          },
+                                          child: const Text("Validation"))
                                     ],
                                   ),
                                 ),
                               ),
                             );
                           });
-                                        },
+                    },
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(20),

@@ -18,21 +18,7 @@ class AddShoePage extends StatefulWidget {
 
 class _AddShoePageState extends State<AddShoePage> {
   String error = '';
-  List<bool> _seasonSelected = [false, false, false, false];
-  List<bool> _colorSelected = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+
   bool _isWaterproof = false;
   final List<String> _seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
   final List<String> _colors = [
@@ -47,6 +33,7 @@ class _AddShoePageState extends State<AddShoePage> {
     'Pink',
     'Other'
   ];
+
   File? _imageFile;
 
   Future<String> uploadImage() async {
@@ -81,6 +68,20 @@ class _AddShoePageState extends State<AddShoePage> {
     });
   }
 
+  List<bool> selectedColors = [];
+  List<bool> selectedSeasons = [];
+
+  String? _selectedType = 'Sneaker';
+  @override
+  void initState() {
+    super.initState();
+
+    selectedColors = List<bool>.filled(_colors.length, false);
+    selectedSeasons = List<bool>.filled(_seasons.length, false);
+  }
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController brandController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
@@ -95,9 +96,6 @@ class _AddShoePageState extends State<AddShoePage> {
     }
 
     var photoURL = '';
-
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController brandController = TextEditingController();
 
     return SingleChildScrollView(
       child: Center(
@@ -132,10 +130,10 @@ class _AddShoePageState extends State<AddShoePage> {
             ),
             const Text("Seasons"),
             ToggleButtons(
-              isSelected: _seasonSelected,
+              isSelected: selectedSeasons,
               onPressed: (int index) {
                 setState(() {
-                  _seasonSelected[index] = !_seasonSelected[index];
+                  selectedSeasons[index] = !selectedSeasons[index];
                 });
               },
               children: _seasons.map((season) => Text(season)).toList(),
@@ -154,31 +152,34 @@ class _AddShoePageState extends State<AddShoePage> {
               children: _colors
                   .asMap()
                   .map((index, color) => MapEntry(
-                      index,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: _colorSelected[index]
-                                ? const Color.fromARGB(255, 246, 144, 121)
-                                : null,
+                        index,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: selectedColors[index]
+                                  ? const Color.fromARGB(255, 246, 144, 121)
+                                  : null,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedColors[index] = !selectedColors[index];
+                              });
+                            },
+                            child: Text(color),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _colorSelected[index] = !_colorSelected[index];
-                            });
-                          },
-                          child: Text(color),
                         ),
-                      )))
+                      ))
                   .values
                   .toList(),
             ),
             const Text('Type'),
             DropdownButton<String>(
-              value: 'Sneaker',
+              value: _selectedType,
               onChanged: (String? newValue) {
-                setState(() {});
+                setState(() {
+                  _selectedType = newValue;
+                });
               },
               items: <String>[
                 'Sneaker',
@@ -200,7 +201,7 @@ class _AddShoePageState extends State<AddShoePage> {
                   List<String?> filteredSeasons = _seasons
                       .asMap()
                       .map((index, season) {
-                        if (_seasonSelected[index]) {
+                        if (selectedSeasons[index]) {
                           return MapEntry(index, season);
                         } else {
                           return MapEntry(index, null);
@@ -213,7 +214,7 @@ class _AddShoePageState extends State<AddShoePage> {
                   List<String?> filteredColors = _colors
                       .asMap()
                       .map((index, color) {
-                        if (_colorSelected[index]) {
+                        if (selectedColors[index]) {
                           return MapEntry(index, color);
                         } else {
                           return MapEntry(index, null);
@@ -239,7 +240,7 @@ class _AddShoePageState extends State<AddShoePage> {
                     'Seasons': filteredSeasons,
                     'Waterproof': _isWaterproof,
                     'Colors': filteredColors,
-                    'Type': 'Sneaker',
+                    'Type': _selectedType,
                     'PhotoURL': photoURL,
                     'IdUser': uid,
                     'DateLastWorn': DateTime.now(),
