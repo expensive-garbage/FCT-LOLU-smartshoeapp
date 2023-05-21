@@ -1,110 +1,265 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:namer_app/MyApp.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 class StatisticsPage extends StatefulWidget {
   const StatisticsPage({Key? key}) : super(key: key);
-
   @override
   State<StatisticsPage> createState() => StatisticsPageState();
 }
 
-class ChartData {
-  ChartData(this.x, this.y);
-  final String x;
-  final double? y;
+class ColorsShoeData {
+  ColorsShoeData(this.color, this.count);
+  final String color;
+  final int? count;
 }
 
 class StatisticsPageState extends State<StatisticsPage> {
-  final int id = 0;
-
+  FirebaseAuth auth = FirebaseAuth.instance;
   void updateState(int index, BuildContext context) {
     if (index != 2) {
       Navigator.pushNamed(context, '/home');
     }
   }
 
-  final dataMap = <String, double>{
-    "Veja": 5,
-    "Nike Dunk": 3,
-    "Converse": 7,
-  };
 
-  final colorList = <Color>[
-    Colors.red,
-    Colors.amber,
-    const Color.fromARGB(66, 98, 111, 221),
-  ];
+  List<QueryDocumentSnapshot> shoesListbis = [];
+  @override
+  void initState() {
+    super.initState();
+    getShoesData();
+  }
+
+  Future<void> getShoesData() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore
+        .instance
+        .collection('shoe')
+        .where('IdUser', isEqualTo: user?.uid)
+        .get();
+
+    setState(() {
+      shoesListbis = querySnapshot.docs;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    int currentIndex = 0;
+    String uid = appState.uid;
+    Size screenSize = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistics',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 4, 104, 130),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            // Action souhaitée lors de l'appui sur le bouton flèche
-            // Par exemple, pour revenir à l'écran précédent :
-            appState.changeIndexProfilePage(0);
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height,
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: PieChart(
-                  dataMap: dataMap,
-                  chartType: ChartType.disc,
-                  ringStrokeWidth: 6,
-                  baseChartColor: Colors.grey[300]!,
-                  colorList: colorList,
+    final Stream<QuerySnapshot> _shoesStreamNC = FirebaseFirestore.instance
+        .collection('shoe')
+        .where('IdUser', isEqualTo: uid)
+        .snapshots();
+
+
+    return MaterialApp(
+        home: DefaultTabController(
+      length: shoesListbis.length+1,
+      child: StreamBuilder<QuerySnapshot>(
+          stream: _shoesStreamNC,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              print('Error: ${snapshot.error}');
+              return Text('An error occurred');
+            } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return Text('No matching shoes');
+            } else {
+              final Shoes = snapshot.data!;
+              List<QueryDocumentSnapshot> shoesList = Shoes.docs;
+
+              List<Tab> tabs = List.generate(shoesList.length, (index) {
+                return Tab(
+                  text: shoesList[index]['Name'],
+                );
+              });
+
+              List<SingleChildScrollView> childrenStats =
+                  List.generate(shoesList.length, (index) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(children: [
+                        // ignore: prefer_interpolation_to_compose_strings
+                        Text(
+                            '${'You did not wear your ' + shoesList[index]['Name']}since X days'),
+                      ]),
+                    ),
+                  ),
+                );
+              });
+
+              final Random random = Random();
+              List<Color> colorslist = [];
+              Map<String, double> brandCount = {};
+              Map<String, double> generateDataMapBrand() {
+                shoesList.forEach((shoe) {
+                  String brand = shoe['Brand'];
+                  brandCount[brand] = (brandCount[brand] ?? 0) + 1;
+                });
+                return brandCount;
+              }
+
+              brandCount = generateDataMapBrand();
+
+              String favouriteType = '';
+
+              String getMostFrequentType(
+                  List<QueryDocumentSnapshot> shoesList) {
+                Map<String, int> typeCount = {};
+                shoesList.forEach((shoe) {
+                  String type = shoe['Type'];
+                  typeCount[type] = (typeCount[type] ?? 0) + 1;
+                });
+
+                int maxCount = 0;
+                typeCount.forEach((type, count) {
+                  if (count > maxCount) {
+                    maxCount = count;
+                    favouriteType = type;
+                  }
+                });
+
+                return favouriteType;
+              }
+
+              favouriteType = getMostFrequentType(shoesList);
+
+              Map<String, int> frequencyColors = {};
+              """
+              Map<String, int> getFrequencyColors(
+                  List<QueryDocumentSnapshot> shoesList) {
+                shoesList.forEach((shoe) {
+                  List<String> colors = shoe['Colors'];
+                  print(colors);
+                  for (String color in colors) {
+                    if (color != 'null') {
+                      frequencyColors[color] =
+                          (frequencyColors[color] ?? 0) + 1;
+                    }
+                  }
+                });
+                return frequencyColors;
+              }
+
+              frequencyColors = getFrequencyColors(shoesList);
+              """;
+              List<ColorsShoeData> chartData = [ColorsShoeData('yellow', 3),ColorsShoeData('blue', 5),ColorsShoeData('black', 6)];
+              """
+              List<ColorsShoeData> generateChartData(
+                  Map<String, int> frequencyColors) {
+                frequencyColors.forEach((color, frequency) {
+                  chartData.add(ColorsShoeData(color, frequency));
+                });
+                return chartData;
+              }
+              chartData = generateChartData(frequencyColors);
+              """;
+              List<Color> generateRandomColors() {
+                for (int i = 0; i < brandCount.length; i++) {
+                  Color color = Color.fromRGBO(
+                    random.nextInt(256),
+                    random.nextInt(256),
+                    random.nextInt(256),
+                    1.0,
+                  );
+                  colorslist.add(color);
+                }
+                return colorslist;
+              }
+
+              colorslist = generateRandomColors();
+              return Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(isScrollable: true, tabs: [
+                    const Tab(text: 'Overview'),
+                    for (Tab tab in tabs) tab,
+                  ]),
+                  title: const Text('Statistics'),
+                  backgroundColor: const Color.fromARGB(255, 4, 104, 130),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      appState.changeIndexProfilePage(0);
+                    },
+                  ),
                 ),
-              ),
-              const Text('Wearing days of each shoes',
-                  style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-              const SizedBox(height: 16),
-              Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  width: double.infinity,
-                  height: 200,
-                  child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    series: <ChartSeries>[
-                      LineSeries<ChartData, String>(
-                          dataSource: [
-                            ChartData('Day 1', 0.2),
-                            ChartData('Day 2', 0.8),
-                            ChartData('Day 3', 0.6),
-                            ChartData('Day 4', 0.3)
-                          ],
-                          xValueMapper: (ChartData data, _) => data.x,
-                          yValueMapper: (ChartData data, _) => data.y)
-                    ],
-                  )),
-              const Text('Humidity Rate',
-                  style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.normal)),
-              const SizedBox(height: 16),
-            ]),
-          ),
-        ),
-      ),
-    );
+                body: TabBarView(children: [
+                  SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: MediaQuery.of(context).size.height,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(children: [
+                          const Text('Number of shoes by brand',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.normal)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: PieChart(
+                              dataMap: brandCount,
+                              chartType: ChartType.disc,
+                              ringStrokeWidth: 6,
+                              baseChartColor: Colors.grey[300]!,
+                              colorList: colorslist,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Text('Your favorite type of shoes is $favouriteType',
+                              style: const TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 20),
+                          Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              width: double.infinity,
+                              height: 200,
+                              child: SfCartesianChart(
+                                primaryXAxis: CategoryAxis(),
+                                series: <ChartSeries<ColorsShoeData, String>>[
+                                  ColumnSeries<ColorsShoeData, String>(
+                                    dataSource: chartData,
+                                    xValueMapper: (ColorsShoeData data, _) =>
+                                        data.color,
+                                    yValueMapper: (ColorsShoeData data, _) =>
+                                        data.count,
+                                    dataLabelSettings: const DataLabelSettings(
+                                        isVisible: true),
+                                  )
+                                ],
+                              )),
+                          const Text('Frequency of each color',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.normal)),
+                          const SizedBox(height: 16),
+                        ]),
+                      ),
+                    ),
+                  ),
+                  for (SingleChildScrollView child in childrenStats) child,
+                ]),
+              );
+            }
+          }),
+    ));
   }
 }

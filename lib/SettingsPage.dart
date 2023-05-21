@@ -157,9 +157,9 @@ class SettingsPageState extends State<SettingsPage> {
               SizedBox(height: 16),
               Slider(
                 value: currentTemperature,
-                min: 0,
-                max: 100,
-                divisions: 50,
+                min: -15,
+                max: 50,
+                divisions: 65,
                 label: currentTemperature.round().toString(),
                 onChanged: (double value) {
                   setState(() {
