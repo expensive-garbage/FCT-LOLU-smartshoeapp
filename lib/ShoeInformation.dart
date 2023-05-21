@@ -36,7 +36,7 @@ class _ShoesInformationState extends State<ShoesInformation> {
           return const Text('Something went wrong');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading");
+          return const CircularProgressIndicator();
         }
         return SingleChildScrollView(
           child: Column(
@@ -72,16 +72,20 @@ class _ShoesInformationState extends State<ShoesInformation> {
                       child: Column(
                         children: [
                           Expanded(
-                            child: Image.network(
-                              data['PhotoURL'],
-                            ),
+                            child: data['PhotoURL'] == ""
+                                ? Text("Any Photo Here")
+                                : Image.network(
+                                    data['PhotoURL'],
+                                  ),
                           ),
                           Text(data['Name'],
                               style: const TextStyle(
-                                  color: Colors.black, fontSize: 20)),
+                                  color: Color.fromARGB(255, 219, 219, 219),
+                                  fontSize: 15)),
                           Text(data['Brand'],
                               style: const TextStyle(
-                                  color: Colors.black, fontSize: 20)),
+                                  color: Color.fromARGB(255, 219, 219, 219),
+                                  fontSize: 15)),
                         ],
                       ),
                     ),

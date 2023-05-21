@@ -5,6 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+import 'MyApp.dart';
 
 class AddShoePage extends StatefulWidget {
   const AddShoePage({super.key});
@@ -14,6 +17,7 @@ class AddShoePage extends StatefulWidget {
 }
 
 class _AddShoePageState extends State<AddShoePage> {
+  String error = '';
   List<bool> _seasonSelected = [false, false, false, false];
   List<bool> _colorSelected = [
     false,
@@ -39,9 +43,7 @@ class _AddShoePageState extends State<AddShoePage> {
     'Black',
     'White',
     'Grey',
-    'Brown',
     'Orange',
-    'Purple',
     'Pink',
     'Other'
   ];
@@ -81,6 +83,7 @@ class _AddShoePageState extends State<AddShoePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user = auth.currentUser;
     String uid = '';
@@ -190,36 +193,64 @@ class _AddShoePageState extends State<AddShoePage> {
                 );
               }).toList(),
             ),
+            Text(error, style: const TextStyle(color: Colors.red)),
             ElevatedButton(
                 onPressed: () async {
                   photoURL = await uploadImage();
+                  List<String?> filteredSeasons = _seasons
+                      .asMap()
+                      .map((index, season) {
+                        if (_seasonSelected[index]) {
+                          return MapEntry(index, season);
+                        } else {
+                          return MapEntry(index, null);
+                        }
+                      })
+                      .values
+                      .where((season) => season != null)
+                      .toList();
+
+                  List<String?> filteredColors = _colors
+                      .asMap()
+                      .map((index, color) {
+                        if (_colorSelected[index]) {
+                          return MapEntry(index, color);
+                        } else {
+                          return MapEntry(index, null);
+                        }
+                      })
+                      .values
+                      .where((color) => color != null)
+                      .toList();
+
+                  if (nameController.text == '' || brandController.text == '') {
+                    error = 'Please fill all the fields';
+                    appState.changeIndexMyHomePage(3);
+                    return;
+                  }
+                  if (filteredSeasons.isEmpty || filteredColors.isEmpty) {
+                    error = 'Please select at least one color and one season';
+                    appState.changeIndexMyHomePage(3);
+                    return;
+                  }
                   FirebaseFirestore.instance.collection('shoe').doc().set({
                     'Name': nameController.text,
                     'Brand': brandController.text,
-                    'Seasons': _seasons
-                        .asMap()
-                        .map((index, season) => MapEntry(
-                            index, _seasonSelected[index] ? season : null))
-                        .values
-                        .toList(),
+                    'Seasons': filteredSeasons,
                     'Waterproof': _isWaterproof,
-                    'Colors': _colors
-                        .asMap()
-                        .map((index, color) => MapEntry(
-                            index, _colorSelected[index] ? color : null))
-                        .values
-                        .toList(),
+                    'Colors': filteredColors,
                     'Type': 'Sneaker',
                     'PhotoURL': photoURL,
                     'IdUser': uid,
                     'DateLastWorn': DateTime.now(),
                   }).then((value) {
+                    appState.changeIndexMyHomePage(1);
                     print('Document ajouté avec succès');
                   }).catchError((error) {
                     print('Erreur lors de l\'ajout du document: $error');
                   });
                 },
-                child: Text('Add Shoe')),
+                child: const Text('Add Shoe')),
           ],
         ),
       ),
