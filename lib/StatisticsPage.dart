@@ -5,6 +5,7 @@ import 'package:namer_app/MyApp.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,12 @@ class ColorsShoeData {
   final int? count;
 }
 
+class HumidityShoeData {
+  HumidityShoeData(this.rate, this.index);
+  final double rate;
+  final int index;
+}
+
 class StatisticsPageState extends State<StatisticsPage> {
   FirebaseAuth auth = FirebaseAuth.instance;
   void updateState(int index, BuildContext context) {
@@ -28,7 +35,6 @@ class StatisticsPageState extends State<StatisticsPage> {
       Navigator.pushNamed(context, '/home');
     }
   }
-
 
   List<QueryDocumentSnapshot> shoesListbis = [];
   @override
@@ -55,19 +61,22 @@ class StatisticsPageState extends State<StatisticsPage> {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     String uid = appState.uid;
-    Size screenSize = MediaQuery.of(context).size;
 
-    final Stream<QuerySnapshot> _shoesStreamNC = FirebaseFirestore.instance
+    final Stream<QuerySnapshot> shoesStreamNC = FirebaseFirestore.instance
         .collection('shoe')
         .where('IdUser', isEqualTo: uid)
         .snapshots();
 
+    final Stream<QuerySnapshot> shoesDataStream = FirebaseFirestore.instance
+        .collection('shoeData')
+        .where('IDofShoe', isEqualTo: 'SGKmxDDB2shwdsQ5Grzf')
+        .snapshots();
 
     return MaterialApp(
         home: DefaultTabController(
-      length: shoesListbis.length+1,
+      length: shoesListbis.length + 1,
       child: StreamBuilder<QuerySnapshot>(
-          stream: _shoesStreamNC,
+          stream: shoesStreamNC,
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -96,11 +105,77 @@ class StatisticsPageState extends State<StatisticsPage> {
                     ),
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
-                      child: Column(children: [
-                        // ignore: prefer_interpolation_to_compose_strings
-                        Text(
-                            '${'You did not wear your ' + shoesList[index]['Name']}since X days'),
-                      ]),
+                      child: Column(
+                        children: [
+                          Text(
+                              'The last time you wore your ${shoesList[index]['Name']} was on ${shoesList[index]['DateLastWorn'].toString()}'),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: shoesDataStream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<QuerySnapshot> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              } else if (snapshot.hasError) {
+                                print('Error: ${snapshot.error}');
+                                return Text('An error occurred');
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
+                                return Text('No matching data');
+                              } else {
+                                final ShoeData = snapshot.data!;
+                                List<QueryDocumentSnapshot> shoesDataList =
+                                    ShoeData.docs;
+                                List<double> humidityRates = List.generate(
+                                    shoesDataList.length, (index) {
+                                  return shoesDataList[index]['humidity'];
+                                });
+                                List<HumidityShoeData> chartHumidityData = [];
+
+                                List<HumidityShoeData>
+                                    generateChartHumidityData(
+                                        List<double> humidityRates) {
+                                  List<HumidityShoeData> chartHumidityData = [];
+                                  int i = 0;
+                                  humidityRates.forEach((humidity) {
+                                    chartHumidityData
+                                        .add(HumidityShoeData(humidity, i));
+                                    i += 1;
+                                  });
+                                  return chartHumidityData;
+                                }
+
+                                chartHumidityData =
+                                    generateChartHumidityData(humidityRates);
+
+                                return Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    width: double.infinity,
+                                    height: 200,
+                                    child: SfCartesianChart(
+                                      primaryXAxis: CategoryAxis(),
+                                      series: <
+                                          ChartSeries<HumidityShoeData, int>>[
+                                        ColumnSeries<HumidityShoeData, int>(
+                                          dataSource: chartHumidityData,
+                                          xValueMapper:
+                                              (HumidityShoeData data, _) =>
+                                                  data.index,
+                                          yValueMapper:
+                                              (HumidityShoeData data, _) =>
+                                                  data.rate,
+                                          dataLabelSettings:
+                                              const DataLabelSettings(
+                                                  isVisible: true),
+                                        )
+                                      ],
+                                    ));
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -141,9 +216,9 @@ class StatisticsPageState extends State<StatisticsPage> {
               }
 
               favouriteType = getMostFrequentType(shoesList);
-
-              Map<String, int> frequencyColors = {};
               """
+              Map<String, int> frequencyColors = {};
+
               Map<String, int> getFrequencyColors(
                   List<QueryDocumentSnapshot> shoesList) {
                 shoesList.forEach((shoe) {
@@ -160,8 +235,13 @@ class StatisticsPageState extends State<StatisticsPage> {
               }
 
               frequencyColors = getFrequencyColors(shoesList);
+              print(frequencyColors);
               """;
-              List<ColorsShoeData> chartData = [ColorsShoeData('yellow', 3),ColorsShoeData('blue', 5),ColorsShoeData('black', 6)];
+              List<ColorsShoeData> chartData = [
+                ColorsShoeData('yellow', 3),
+                ColorsShoeData('blue', 5),
+                ColorsShoeData('black', 6)
+              ];
               """
               List<ColorsShoeData> generateChartData(
                   Map<String, int> frequencyColors) {

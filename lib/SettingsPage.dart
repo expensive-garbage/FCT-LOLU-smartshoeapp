@@ -210,65 +210,61 @@ class SettingsPageState extends State<SettingsPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Modify my mail address'),
-                              content: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Form(
-                                  child: Column(
-                                    children: <Widget>[
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'New mail address',
-                                          hintText: currentAdress,
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
-                                          ),
-                                          icon: Icon(Icons.mail_lock),
+                          title: const Text('Modify my mail address'),
+                          content: Container(
+                            height: 200.0, // Définir la hauteur souhaitée
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Form(
+                                child: Column(
+                                  children: <Widget>[
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'New mail address',
+                                        hintText: currentAdress,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(50.0),
                                         ),
-                                        onChanged: (value) => newAdress = value,
+                                        icon: Icon(Icons.mail_lock),
                                       ),
-                                      SizedBox(height: 20),
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Enter your password',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
-                                          ),
-                                          icon: Icon(Icons.password),
+                                      onChanged: (value) => newAdress = value,
+                                    ),
+                                    SizedBox(height: 20),
+                                    TextFormField(
+                                      decoration: InputDecoration(
+                                        labelText: 'Enter your password',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(50.0),
                                         ),
-                                        onChanged: (value) =>
-                                            currentPassword = value,
+                                        icon: Icon(Icons.password),
                                       ),
-                                      SizedBox(height: 20),
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            final user = FirebaseAuth
-                                                .instance.currentUser;
-                                            final cred =
-                                                EmailAuthProvider.credential(
-                                                    email: user!.email!,
-                                                    password: currentPassword);
-                                            user
-                                                .reauthenticateWithCredential(
-                                                    cred)
-                                                .then((value) {
-                                              user
-                                                  .updateEmail(newAdress)
-                                                  .then((_) {
-                                                print("sucess mail updated");
-                                              }).catchError((error) {
-                                                print("fail mail updated");
-                                              });
-                                            }).catchError((err) {});
-                                          },
-                                          child: const Text("Validation"))
-                                    ],
-                                  ),
+                                      onChanged: (value) => currentPassword = value,
+                                    ),
+                                    SizedBox(height: 20),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final user = FirebaseAuth.instance.currentUser;
+                                        final cred = EmailAuthProvider.credential(
+                                          email: user!.email!,
+                                          password: currentPassword,
+                                        );
+                                        user.reauthenticateWithCredential(cred).then((value) {
+                                          user.updateEmail(newAdress).then((_) {
+                                            print("success mail updated");
+                                          }).catchError((error) {
+                                            print("fail mail updated");
+                                          });
+                                        }).catchError((err) {});
+                                      },
+                                      child: const Text("Validation"),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
+                            ),
+                          ),
+                        );
+
                           });
                     },
                     style: ElevatedButton.styleFrom(
@@ -306,7 +302,9 @@ class SettingsPageState extends State<SettingsPage> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text('Modify your password'),
-                              content: Padding(
+                              content: Container(
+                              height: 200.0, // Définir la hauteur souhaitée
+                              child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Form(
                                   child: Column(
@@ -367,6 +365,7 @@ class SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ),
                               ),
+                            ),
                             );
                           });
                     },
@@ -405,7 +404,9 @@ class SettingsPageState extends State<SettingsPage> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text('Modify your profile picture'),
-                              content: Padding(
+                              content: Container(
+                              height: 200.0, // Définir la hauteur souhaitée
+                              child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Form(
                                   child: Column(
@@ -449,6 +450,7 @@ class SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ),
                               ),
+                            ),
                             );
                           });
                     },
@@ -487,7 +489,9 @@ class SettingsPageState extends State<SettingsPage> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text('Modify your name'),
-                              content: Padding(
+                              content: Container(
+                              height: 150.0, // Définir la hauteur souhaitée
+                              child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Form(
                                   child: Column(
@@ -529,6 +533,7 @@ class SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ),
                               ),
+                            ),
                             );
                           });
                     },

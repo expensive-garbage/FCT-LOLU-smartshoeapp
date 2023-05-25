@@ -6,7 +6,6 @@ import 'MyApp.dart';
 
 class ShoePage extends StatelessWidget {
   String? id;
-
   ShoePage({super.key, required this.id});
 
   @override
