@@ -216,33 +216,23 @@ class StatisticsPageState extends State<StatisticsPage> {
               }
 
               favouriteType = getMostFrequentType(shoesList);
-              """
+
               Map<String, int> frequencyColors = {};
 
               Map<String, int> getFrequencyColors(
                   List<QueryDocumentSnapshot> shoesList) {
-                shoesList.forEach((shoe) {
-                  List<String> colors = shoe['Colors'];
-                  print(colors);
-                  for (String color in colors) {
-                    if (color != 'null') {
-                      frequencyColors[color] =
-                          (frequencyColors[color] ?? 0) + 1;
-                    }
-                  }
+                    shoesList.forEach((shoe) {
+                      for (String color in shoe['Colors']) {
+                        frequencyColors[color] = (frequencyColors[color] ?? 0) + 1;
+                      }
                 });
                 return frequencyColors;
               }
 
               frequencyColors = getFrequencyColors(shoesList);
-              print(frequencyColors);
-              """;
-              List<ColorsShoeData> chartData = [
-                ColorsShoeData('yellow', 3),
-                ColorsShoeData('blue', 5),
-                ColorsShoeData('black', 6)
-              ];
-              """
+              
+              List<ColorsShoeData> chartData = [];
+
               List<ColorsShoeData> generateChartData(
                   Map<String, int> frequencyColors) {
                 frequencyColors.forEach((color, frequency) {
@@ -250,8 +240,9 @@ class StatisticsPageState extends State<StatisticsPage> {
                 });
                 return chartData;
               }
+
               chartData = generateChartData(frequencyColors);
-              """;
+
               List<Color> generateRandomColors() {
                 for (int i = 0; i < brandCount.length; i++) {
                   Color color = Color.fromRGBO(
@@ -303,11 +294,14 @@ class StatisticsPageState extends State<StatisticsPage> {
                               colorList: colorslist,
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          Text('Your favorite type of shoes is $favouriteType',
+                          const SizedBox(height: 30),
+                          Text('The type of shoes that you have the most is $favouriteType',
                               style: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 30),
+                          const Text('Frequency of each color among your shoes',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.normal)),
                           Container(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16),
@@ -327,9 +321,7 @@ class StatisticsPageState extends State<StatisticsPage> {
                                   )
                                 ],
                               )),
-                          const Text('Frequency of each color',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.normal)),
+                          
                           const SizedBox(height: 16),
                         ]),
                       ),
