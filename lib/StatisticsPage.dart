@@ -6,6 +6,7 @@ import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:intl/intl.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,18 @@ class ColorsShoeData {
 class HumidityShoeData {
   HumidityShoeData(this.rate, this.index);
   final double rate;
+  final int index;
+}
+
+class LightShoeData {
+  LightShoeData(this.light, this.index);
+  final double light;
+  final int index;
+}
+
+class TemperatureShoeData {
+  TemperatureShoeData(this.temp, this.index);
+  final double temp;
   final int index;
 }
 
@@ -67,10 +80,8 @@ class StatisticsPageState extends State<StatisticsPage> {
         .where('IdUser', isEqualTo: uid)
         .snapshots();
 
-    final Stream<QuerySnapshot> shoesDataStream = FirebaseFirestore.instance
-        .collection('shoeData')
-        .where('IDofShoe', isEqualTo: 'SGKmxDDB2shwdsQ5Grzf')
-        .snapshots();
+    final Stream<QuerySnapshot> shoesDataStream =
+        FirebaseFirestore.instance.collection('shoeData').snapshots();
 
     return MaterialApp(
         home: DefaultTabController(
@@ -98,6 +109,12 @@ class StatisticsPageState extends State<StatisticsPage> {
 
               List<SingleChildScrollView> childrenStats =
                   List.generate(shoesList.length, (index) {
+                Timestamp lastTimewore = shoesList[index]['DateLastWorn'];
+                int time = lastTimewore.seconds;
+                DateTime dateTime =
+                    DateTime.fromMillisecondsSinceEpoch(time*1000);
+                int lastDayWore = dateTime.day;
+                int lastMonthWore = dateTime.month;
                 return SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
@@ -108,7 +125,11 @@ class StatisticsPageState extends State<StatisticsPage> {
                       child: Column(
                         children: [
                           Text(
-                              'The last time you wore your ${shoesList[index]['Name']} was on ${shoesList[index]['DateLastWorn'].toString()}'),
+                              'The last time you wore this pair ${shoesList[index]["Name"]} was on the $lastDayWore/$lastMonthWore'),
+                          const SizedBox(height: 20),
+                          const Text(
+                              'Hereunder some graphs about the data recorded by the shoe tree : '),
+                          const SizedBox(height: 15),
                           StreamBuilder<QuerySnapshot>(
                             stream: shoesDataStream,
                             builder: (BuildContext context,
@@ -126,9 +147,17 @@ class StatisticsPageState extends State<StatisticsPage> {
                                 final ShoeData = snapshot.data!;
                                 List<QueryDocumentSnapshot> shoesDataList =
                                     ShoeData.docs;
+                                List<QueryDocumentSnapshot> ShoesDataListId =
+                                    [];
+                                shoesDataList.forEach((element) {
+                                  if (element["IDofShoe"] ==
+                                      shoesList[index].id) {
+                                    ShoesDataListId.add(element);
+                                  }
+                                });
                                 List<double> humidityRates = List.generate(
-                                    shoesDataList.length, (index) {
-                                  return shoesDataList[index]['humidity'];
+                                    ShoesDataListId.length, (index) {
+                                  return ShoesDataListId[index]['humidity'];
                                 });
                                 List<HumidityShoeData> chartHumidityData = [];
 
@@ -148,29 +177,139 @@ class StatisticsPageState extends State<StatisticsPage> {
                                 chartHumidityData =
                                     generateChartHumidityData(humidityRates);
 
-                                return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    width: double.infinity,
-                                    height: 200,
-                                    child: SfCartesianChart(
-                                      primaryXAxis: CategoryAxis(),
-                                      series: <
-                                          ChartSeries<HumidityShoeData, int>>[
-                                        ColumnSeries<HumidityShoeData, int>(
-                                          dataSource: chartHumidityData,
-                                          xValueMapper:
-                                              (HumidityShoeData data, _) =>
-                                                  data.index,
-                                          yValueMapper:
-                                              (HumidityShoeData data, _) =>
-                                                  data.rate,
-                                          dataLabelSettings:
-                                              const DataLabelSettings(
-                                                  isVisible: true),
-                                        )
-                                      ],
-                                    ));
+                                List<double> lightRates = List.generate(
+                                    ShoesDataListId.length, (index) {
+                                  return ShoesDataListId[index]['light'];
+                                });
+                                List<LightShoeData> chartlightData = [];
+
+                                List<LightShoeData> generateChartlightData(
+                                    List<double> lightRates) {
+                                  List<LightShoeData> chartlightData = [];
+                                  int i = 0;
+                                  lightRates.forEach((light) {
+                                    chartlightData.add(LightShoeData(light, i));
+                                    i += 1;
+                                  });
+                                  return chartlightData;
+                                }
+
+                                chartlightData =
+                                    generateChartlightData(lightRates);
+
+                                List<double> temperatureRates = List.generate(
+                                    ShoesDataListId.length, (index) {
+                                  return ShoesDataListId[index]['temperature'];
+                                });
+
+                                List<TemperatureShoeData> chartTemperatureData =
+                                    [];
+
+                                List<TemperatureShoeData>
+                                    generateChartTemperatureData(
+                                        List<double> temperatureRates) {
+                                  List<TemperatureShoeData>
+                                      chartTemperatureData = [];
+                                  int i = 0;
+                                  temperatureRates.forEach((temp) {
+                                    chartTemperatureData
+                                        .add(TemperatureShoeData(temp, i));
+                                    i += 1;
+                                  });
+                                  return chartTemperatureData;
+                                }
+
+                                chartTemperatureData =
+                                    generateChartTemperatureData(
+                                        temperatureRates);
+
+                                return Column(
+                                  children: [
+                                    const Text(
+                                        'Evolution of the humidity rate'),
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        width: double.infinity,
+                                        height: 200,
+                                        child: SfCartesianChart(
+                                          primaryXAxis: CategoryAxis(),
+                                          series: <
+                                              ChartSeries<HumidityShoeData,
+                                                  int>>[
+                                            LineSeries<HumidityShoeData, int>(
+                                              color: Colors.amber,
+                                              dataSource: chartHumidityData,
+                                              xValueMapper:
+                                                  (HumidityShoeData data, _) =>
+                                                      data.index,
+                                              yValueMapper:
+                                                  (HumidityShoeData data, _) =>
+                                                      data.rate,
+                                              dataLabelSettings:
+                                                  const DataLabelSettings(
+                                                      isVisible: true),
+                                            )
+                                          ],
+                                        )),
+                                    SizedBox(height: 20),
+                                    const Text('Evolution of the enlightment'),
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        width: double.infinity,
+                                        height: 200,
+                                        child: SfCartesianChart(
+                                          primaryXAxis: CategoryAxis(),
+                                          series: <
+                                              ChartSeries<LightShoeData, int>>[
+                                            LineSeries<LightShoeData, int>(
+                                              color: Colors.red,
+                                              dataSource: chartlightData,
+                                              xValueMapper:
+                                                  (LightShoeData data, _) =>
+                                                      data.index,
+                                              yValueMapper:
+                                                  (LightShoeData data, _) =>
+                                                      data.light,
+                                              dataLabelSettings:
+                                                  const DataLabelSettings(
+                                                      isVisible: true),
+                                            )
+                                          ],
+                                        )),
+                                    SizedBox(height: 20),
+                                    const Text('Evolution of the temperature'),
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        width: double.infinity,
+                                        height: 200,
+                                        child: SfCartesianChart(
+                                          primaryXAxis: CategoryAxis(),
+                                          series: <
+                                              ChartSeries<TemperatureShoeData,
+                                                  int>>[
+                                            LineSeries<TemperatureShoeData,
+                                                int>(
+                                              color: Colors.green,
+                                              dataSource: chartTemperatureData,
+                                              xValueMapper:
+                                                  (TemperatureShoeData data,
+                                                          _) =>
+                                                      data.index,
+                                              yValueMapper:
+                                                  (TemperatureShoeData data,
+                                                          _) =>
+                                                      data.temp,
+                                              dataLabelSettings:
+                                                  const DataLabelSettings(
+                                                      isVisible: true),
+                                            )
+                                          ],
+                                        )),
+                                  ],
+                                );
                               }
                             },
                           ),
@@ -221,16 +360,16 @@ class StatisticsPageState extends State<StatisticsPage> {
 
               Map<String, int> getFrequencyColors(
                   List<QueryDocumentSnapshot> shoesList) {
-                    shoesList.forEach((shoe) {
-                      for (String color in shoe['Colors']) {
-                        frequencyColors[color] = (frequencyColors[color] ?? 0) + 1;
-                      }
+                shoesList.forEach((shoe) {
+                  for (String color in shoe['Colors']) {
+                    frequencyColors[color] = (frequencyColors[color] ?? 0) + 1;
+                  }
                 });
                 return frequencyColors;
               }
 
               frequencyColors = getFrequencyColors(shoesList);
-              
+
               List<ColorsShoeData> chartData = [];
 
               List<ColorsShoeData> generateChartData(
@@ -295,7 +434,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                             ),
                           ),
                           const SizedBox(height: 30),
-                          Text('The type of shoes that you have the most is $favouriteType',
+                          Text(
+                              'The type of shoes that you have the most is $favouriteType',
                               style: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 30),
@@ -321,7 +461,6 @@ class StatisticsPageState extends State<StatisticsPage> {
                                   )
                                 ],
                               )),
-                          
                           const SizedBox(height: 16),
                         ]),
                       ),
