@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MyApp.dart';
 
@@ -68,10 +69,17 @@ class _LoginState extends State<Login> {
                             email: emailAddress,
                             password: password,
                           )
-                              .then((UserCredential userCredential) {
+                              .then((UserCredential userCredential) async {
                             // L'utilisateur s'est connecté avec succès
                             // Mettez ici votre logique de redirection vers la page principale, par exemple :
                             appState.checkiflogged();
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setString(
+                                'uid', userCredential.user!.uid);
+                            final String? uid_saved = prefs.getString('uid');
+                            print("in login");
+                            print(uid_saved);
                             appState.changeIndexFirstPage(0);
                           }).catchError((e) {
                             // Une erreur s'est produite lors de la connexion de l'utilisateur

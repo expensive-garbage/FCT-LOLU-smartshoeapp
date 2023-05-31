@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'MyApp.dart';
 import 'StatisticsPage.dart';
 import 'SettingsPage.dart';
@@ -201,7 +202,7 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                       ),
                       const SizedBox(width: 20),
                       const Text(
-                        'Deconnexion',
+                        'Disconnect',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.normal),
                       ),
@@ -211,6 +212,9 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                           await FirebaseAuth.instance.signOut();
                           appState.checkiflogged();
                           appState.indexMyHomePage = 0;
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.remove('uid');
                           Navigator.pushNamed(context, '/');
                           appState.indexProfilePage = 0;
                         },
