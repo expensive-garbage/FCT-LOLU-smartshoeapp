@@ -112,7 +112,7 @@ class StatisticsPageState extends State<StatisticsPage> {
                 Timestamp lastTimewore = shoesList[index]['DateLastWorn'];
                 int time = lastTimewore.seconds;
                 DateTime dateTime =
-                    DateTime.fromMillisecondsSinceEpoch(time*1000);
+                    DateTime.fromMillisecondsSinceEpoch(time * 1000);
                 int lastDayWore = dateTime.day;
                 int lastMonthWore = dateTime.month;
                 return SingleChildScrollView(
@@ -234,9 +234,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                                         height: 200,
                                         child: SfCartesianChart(
                                           primaryXAxis: CategoryAxis(),
-                                          series: <
-                                              ChartSeries<HumidityShoeData,
-                                                  int>>[
+                                          series: <ChartSeries<HumidityShoeData,
+                                              int>>[
                                             LineSeries<HumidityShoeData, int>(
                                               color: Colors.amber,
                                               dataSource: chartHumidityData,
@@ -261,8 +260,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                                         height: 200,
                                         child: SfCartesianChart(
                                           primaryXAxis: CategoryAxis(),
-                                          series: <
-                                              ChartSeries<LightShoeData, int>>[
+                                          series: <ChartSeries<LightShoeData,
+                                              int>>[
                                             LineSeries<LightShoeData, int>(
                                               color: Colors.red,
                                               dataSource: chartlightData,
@@ -287,9 +286,8 @@ class StatisticsPageState extends State<StatisticsPage> {
                                         height: 200,
                                         child: SfCartesianChart(
                                           primaryXAxis: CategoryAxis(),
-                                          series: <
-                                              ChartSeries<TemperatureShoeData,
-                                                  int>>[
+                                          series: <ChartSeries<
+                                              TemperatureShoeData, int>>[
                                             LineSeries<TemperatureShoeData,
                                                 int>(
                                               color: Colors.green,

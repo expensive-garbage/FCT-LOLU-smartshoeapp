@@ -3,16 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/FirstPage.dart';
 import 'package:namer_app/ProfilePage.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'MyHomePage.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:namer_app/FirstPage.dart';
-import 'package:namer_app/ProfilePage.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MyHomePage.dart';
 
@@ -33,13 +23,15 @@ class _MyAppState extends State<MyApp> {
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 4, 104, 130)),
         ),
+        //home: MyHomePage(),
         initialRoute: '/',
         routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
           "/home": (context) => MyHomePage(),
-          '/': (context) {
-            final uid = context.watch<MyAppState>().getUid();
-            return uid.isNotEmpty ? MyHomePage() : FirstPage();
-          },
+          '/': (context) => context.watch<MyAppState>().uid != ''
+              ? MyHomePage()
+              : FirstPage(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
           '/profile': (context) => ProfilePage(),
         },
       ),
@@ -48,8 +40,12 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MyAppState extends ChangeNotifier {
+  //define the data the app needs to function
   var season = "Spring";
+
+  //a suprr
   var nbShoes = 5;
+
   var photoUrlShoe = "";
   var nameShoe = "";
   var brandShoe = "";
@@ -57,11 +53,14 @@ class MyAppState extends ChangeNotifier {
   var waterproofShoe = false;
   var seasonShoe = [];
   var actualShoe = "";
+
   var indexMyHomePage = 0;
   var indexProfilePage = 0;
   var indexFirstPage = 0;
+
   var auth = FirebaseAuth.instance;
-  var uid = "";
+  var uid = '';
+
   var change = false;
 
   checkiflogged() async {
@@ -75,23 +74,7 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> getUid() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('uid') ?? '';
-  }
-
-  void setUid(String uid) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('uid', uid);
-    notifyListeners();
-  }
-
-  void removeUid() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('uid');
-    notifyListeners();
-  }
-
+  //define the functions that change the data
   void changeIndexMyHomePage(int index) {
     indexMyHomePage = index;
     notifyListeners();

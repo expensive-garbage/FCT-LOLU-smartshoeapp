@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MyApp.dart';
 
@@ -69,17 +68,10 @@ class _LoginState extends State<Login> {
                             email: emailAddress,
                             password: password,
                           )
-                              .then((UserCredential userCredential) async {
+                              .then((UserCredential userCredential) {
                             // L'utilisateur s'est connecté avec succès
                             // Mettez ici votre logique de redirection vers la page principale, par exemple :
                             appState.checkiflogged();
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setString(
-                                'uid', userCredential.user!.uid);
-                            final String? uid_saved = prefs.getString('uid');
-                            print("in login");
-                            print(uid_saved);
                             appState.changeIndexFirstPage(0);
                           }).catchError((e) {
                             // Une erreur s'est produite lors de la connexion de l'utilisateur
@@ -87,11 +79,11 @@ class _LoginState extends State<Login> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('Error of connexion'),
-                                content: Text('Check your credentials'),
+                                title: const Text('Error of connexion'),
+                                content: const Text('Check your credentials'),
                                 actions: [
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
@@ -101,7 +93,7 @@ class _LoginState extends State<Login> {
                             );
                           });
                         },
-                        child: const Text("Log in"))),
+                        child: const Text("log in"))),
               ],
             ),
           ),

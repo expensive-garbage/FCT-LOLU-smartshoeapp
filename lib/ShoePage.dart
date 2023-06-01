@@ -43,8 +43,9 @@ class ShoePage extends StatelessWidget {
 
     var waterproof = appState.waterproofShoe;
     var seasonOfShoes = appState.seasonShoe;
-    String seasons =
-        seasonOfShoes.sublist(0, seasonOfShoes.length - 1).join(', ') +
+    String seasons = seasonOfShoes.length == 1
+        ? seasonOfShoes[0]
+        : seasonOfShoes.sublist(0, seasonOfShoes.length - 1).join(', ') +
             ' and ' +
             seasonOfShoes.last;
 

@@ -210,61 +210,71 @@ class SettingsPageState extends State<SettingsPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                          title: const Text('Modify my mail address'),
-                          content: Container(
-                            height: 200.0, // Définir la hauteur souhaitée
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Form(
-                                child: Column(
-                                  children: <Widget>[
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                        labelText: 'New mail address',
-                                        hintText: currentAdress,
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(50.0),
+                              title: const Text('Modify my mail address'),
+                              content: Container(
+                                height: 300.0, // Définir la hauteur souhaitée
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    child: Column(
+                                      children: <Widget>[
+                                        TextFormField(
+                                          decoration: InputDecoration(
+                                            labelText: 'New mail address',
+                                            hintText: currentAdress,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            icon: Icon(Icons.mail_lock),
+                                          ),
+                                          onChanged: (value) =>
+                                              newAdress = value,
                                         ),
-                                        icon: Icon(Icons.mail_lock),
-                                      ),
-                                      onChanged: (value) => newAdress = value,
-                                    ),
-                                    SizedBox(height: 20),
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Enter your password',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(50.0),
+                                        SizedBox(height: 20),
+                                        TextFormField(
+                                          decoration: InputDecoration(
+                                            labelText: 'Enter your password',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            icon: Icon(Icons.password),
+                                          ),
+                                          onChanged: (value) =>
+                                              currentPassword = value,
                                         ),
-                                        icon: Icon(Icons.password),
-                                      ),
-                                      onChanged: (value) => currentPassword = value,
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            final user = FirebaseAuth
+                                                .instance.currentUser;
+                                            final cred =
+                                                EmailAuthProvider.credential(
+                                              email: user!.email!,
+                                              password: currentPassword,
+                                            );
+                                            user
+                                                .reauthenticateWithCredential(
+                                                    cred)
+                                                .then((value) {
+                                              user
+                                                  .updateEmail(newAdress)
+                                                  .then((_) {
+                                                print("success mail updated");
+                                              }).catchError((error) {
+                                                print("fail mail updated");
+                                              });
+                                            }).catchError((err) {});
+                                          },
+                                          child: const Text("Validation"),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 20),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        final user = FirebaseAuth.instance.currentUser;
-                                        final cred = EmailAuthProvider.credential(
-                                          email: user!.email!,
-                                          password: currentPassword,
-                                        );
-                                        user.reauthenticateWithCredential(cred).then((value) {
-                                          user.updateEmail(newAdress).then((_) {
-                                            print("success mail updated");
-                                          }).catchError((error) {
-                                            print("fail mail updated");
-                                          });
-                                        }).catchError((err) {});
-                                      },
-                                      child: const Text("Validation"),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        );
-
+                            );
                           });
                     },
                     style: ElevatedButton.styleFrom(
@@ -303,69 +313,70 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify your password'),
                               content: Container(
-                              height: 200.0, // Définir la hauteur souhaitée
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Form(
-                                  child: Column(
-                                    children: <Widget>[
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'Former Password',
-                                          hintText: 'Insert former password',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
+                                height: 300.0, // Définir la hauteur souhaitée
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    child: Column(
+                                      children: <Widget>[
+                                        TextFormField(
+                                          decoration: InputDecoration(
+                                            labelText: 'Former Password',
+                                            hintText: 'Insert former password',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            icon: Icon(Icons.password),
                                           ),
-                                          icon: Icon(Icons.password),
+                                          onChanged: (value) =>
+                                              currentPassword = value,
                                         ),
-                                        onChanged: (value) =>
-                                            currentPassword = value,
-                                      ),
-                                      SizedBox(height: 20),
-                                      TextFormField(
-                                        decoration: InputDecoration(
-                                          labelText: 'New Password',
-                                          hintText: 'Insert new password',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50.0),
+                                        SizedBox(height: 20),
+                                        TextFormField(
+                                          decoration: InputDecoration(
+                                            labelText: 'New Password',
+                                            hintText: 'Insert new password',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            icon: Icon(Icons.password),
                                           ),
-                                          icon: Icon(Icons.password),
+                                          onChanged: (value) =>
+                                              newPassword = value,
                                         ),
-                                        onChanged: (value) =>
-                                            newPassword = value,
-                                      ),
-                                      SizedBox(height: 20),
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            final user = FirebaseAuth
-                                                .instance.currentUser;
-                                            final cred =
-                                                EmailAuthProvider.credential(
-                                                    email: user!.email!,
-                                                    password: currentPassword);
-                                            user
-                                                .reauthenticateWithCredential(
-                                                    cred)
-                                                .then((value) {
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              final user = FirebaseAuth
+                                                  .instance.currentUser;
+                                              final cred =
+                                                  EmailAuthProvider.credential(
+                                                      email: user!.email!,
+                                                      password:
+                                                          currentPassword);
                                               user
-                                                  .updatePassword(newPassword)
-                                                  .then((_) {
-                                                print("sucess");
-                                                //Success, do something
-                                              }).catchError((error) {
-                                                print("fail");
-                                                //Error, show something
-                                              });
-                                            }).catchError((err) {});
-                                          },
-                                          child: const Text("Validation"))
-                                    ],
+                                                  .reauthenticateWithCredential(
+                                                      cred)
+                                                  .then((value) {
+                                                user
+                                                    .updatePassword(newPassword)
+                                                    .then((_) {
+                                                  print("sucess");
+                                                  //Success, do something
+                                                }).catchError((error) {
+                                                  print("fail");
+                                                  //Error, show something
+                                                });
+                                              }).catchError((err) {});
+                                            },
+                                            child: const Text("Validation"))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                             );
                           });
                     },
@@ -405,52 +416,52 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify your profile picture'),
                               content: Container(
-                              height: 200.0, // Définir la hauteur souhaitée
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Form(
-                                  child: Column(
-                                    children: <Widget>[
-                                      SizedBox(
-                                        height: 150,
-                                        width: 200,
-                                        child: Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: ElevatedButton(
-                                              onPressed: _getImage,
-                                              child: _imageFile == null
-                                                  ? const Text(
-                                                      'Add a profile image')
-                                                  : Image.file(_imageFile!),
+                                height: 300.0, // Définir la hauteur souhaitée
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    child: Column(
+                                      children: <Widget>[
+                                        SizedBox(
+                                          height: 150,
+                                          width: 200,
+                                          child: Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: ElevatedButton(
+                                                onPressed: _getImage,
+                                                child: _imageFile == null
+                                                    ? const Text(
+                                                        'Add a profile image')
+                                                    : Image.file(_imageFile!),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            newImage = await uploadImage();
-                                            final firebaseUser = FirebaseAuth
-                                                .instance.currentUser;
-                                            final databaseReference =
-                                                FirebaseFirestore.instance;
-                                            final collectionReference =
-                                                databaseReference.collection(
-                                                    'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
-                                            await collectionReference
-                                                .doc(firebaseUser!.uid)
-                                                .update({
-                                              'PhotoURL': newImage,
-                                            });
-                                            print(
-                                                'Database updated successfully!');
-                                          },
-                                          child: const Text("Validation"))
-                                    ],
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              newImage = await uploadImage();
+                                              final firebaseUser = FirebaseAuth
+                                                  .instance.currentUser;
+                                              final databaseReference =
+                                                  FirebaseFirestore.instance;
+                                              final collectionReference =
+                                                  databaseReference.collection(
+                                                      'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+                                              await collectionReference
+                                                  .doc(firebaseUser!.uid)
+                                                  .update({
+                                                'PhotoURL': newImage,
+                                              });
+                                              print(
+                                                  'Database updated successfully!');
+                                            },
+                                            child: const Text("Validation"))
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                             );
                           });
                     },
@@ -490,50 +501,50 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify your name'),
                               content: Container(
-                              height: 150.0, // Définir la hauteur souhaitée
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Form(
-                                  child: Column(
-                                    children: <Widget>[
-                                      TextFormField(
-                                          decoration: InputDecoration(
-                                            labelText: 'New name',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(50.0),
+                                height: 150.0, // Définir la hauteur souhaitée
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Form(
+                                    child: Column(
+                                      children: <Widget>[
+                                        TextFormField(
+                                            decoration: InputDecoration(
+                                              labelText: 'New name',
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(50.0),
+                                              ),
+                                              hintText: currentName,
+                                              icon: Icon(Icons.people),
                                             ),
-                                            hintText: currentName,
-                                            icon: Icon(Icons.people),
-                                          ),
-                                          onChanged: (value) =>
-                                              newName = value),
-                                      SizedBox(height: 20),
-                                      ElevatedButton(
-                                          onPressed: () async {
-                                            final firebaseUser = FirebaseAuth
-                                                .instance.currentUser;
-                                            final databaseReference =
-                                                FirebaseFirestore.instance;
-                                            final collectionReference =
-                                                databaseReference.collection(
-                                                    'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
+                                            onChanged: (value) =>
+                                                newName = value),
+                                        SizedBox(height: 20),
+                                        ElevatedButton(
+                                            onPressed: () async {
+                                              final firebaseUser = FirebaseAuth
+                                                  .instance.currentUser;
+                                              final databaseReference =
+                                                  FirebaseFirestore.instance;
+                                              final collectionReference =
+                                                  databaseReference.collection(
+                                                      'user'); // Remplacez 'your_collection' par le nom de votre collection dans la base de données
 
-                                            await collectionReference
-                                                .doc(firebaseUser!.uid)
-                                                .update({
-                                              'Name': newName,
-                                            });
+                                              await collectionReference
+                                                  .doc(firebaseUser!.uid)
+                                                  .update({
+                                                'Name': newName,
+                                              });
 
-                                            print(
-                                                'Database updated successfully!');
-                                          },
-                                          child: const Text("Validation")),
-                                    ],
+                                              print(
+                                                  'Database updated successfully!');
+                                            },
+                                            child: const Text("Validation")),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                             );
                           });
                     },

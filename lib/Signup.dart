@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +7,6 @@ import 'package:flutter/material.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MyApp.dart';
 
@@ -144,13 +142,12 @@ class _SignupState extends State<Signup> {
                             email: emailAddress,
                             password: password,
                           )
-                              .then((UserCredential userCredential) async {
+                              .then((UserCredential userCredential) {
+                            // L'utilisateur s'est connecté avec succès
+                            // Mettez ici votre logique de redirection vers la page principale, par exemple :
+                            print('uid: ' + userCredential.user!.uid);
                             appState.uid = userCredential.user!.uid;
                             appState.changeIndexFirstPage(0);
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setString(
-                                'uid', userCredential.user!.uid);
                             user.doc(appState.uid).set({
                               'PhotoURL': photoURL,
                               'Name': name,
@@ -168,11 +165,12 @@ class _SignupState extends State<Signup> {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: Text('Erreur de connexion'),
-                                content: Text('Vérifiez vos identifiants.'),
+                                title: const Text('Erreur de connexion'),
+                                content:
+                                    const Text('Vérifiez vos identifiants.'),
                                 actions: [
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },

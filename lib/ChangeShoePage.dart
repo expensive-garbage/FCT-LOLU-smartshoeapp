@@ -1,25 +1,18 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'MyApp.dart';
 
 class ChangeShoePage extends StatefulWidget {
-  const ChangeShoePage({super.key});
-
   @override
-  State<ChangeShoePage> createState() => _ChangeShoePageState();
+  _ChangeShoePageState createState() => _ChangeShoePageState();
 }
 
 class _ChangeShoePageState extends State<ChangeShoePage> {
-  String error = '';
+  final _formKey = GlobalKey<FormState>();
 
-  final List<String> _seasons = ['Winter', 'Spring', 'Summer', 'Fall'];
+  List<String> _seasons = ['Spring', 'Summer', 'Fall', 'Winter'];
   final List<String> _colors = [
     'Red',
     'Green',
@@ -33,64 +26,10 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
     'Other'
   ];
 
-  File? _imageFile;
-
-  Future<String> uploadImage() async {
-    if (_imageFile != null) {
-      try {
-        final storageRef = FirebaseStorage.instance.ref();
-        Reference? imagesRef = storageRef
-            .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-        // Uploader le fichier sur Firebase Storage
-        await imagesRef.putFile(_imageFile!);
-
-        // Récupérer l'URL de téléchargement de l'image
-        String downloadURL = await imagesRef.getDownloadURL();
-
-        // Faire quelque chose avec l'URL de téléchargement, comme l'afficher dans l'application
-        print('Image uploaded: $downloadURL');
-        return downloadURL;
-      } catch (e) {
-        print('Error uploading image to Firebase Storage: $e');
-      }
-    }
-    return '';
-  }
-
-  Future<void> _getImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-
-    setState(() {
-      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
-    });
-  }
-
-  List<bool> selectedColors = [];
-  List<bool> selectedSeasons = [];
-
-  String? _selectedType = 'Sneaker';
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController brandController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-    String uid = '';
-    if (user != null) {
-      uid = user.uid;
-      print('L\'UID de l\'utilisateur est: $uid');
-    } else {
-      print('Aucun utilisateur n\'est actuellement authentifié.');
-    }
 
-    var photoURL = appState.photoUrlShoe;
-    var name = appState.nameShoe;
-    var brand = appState.brandShoe;
-    var isWaterproof = appState.waterproofShoe;
     var selectedSeasons = appState.seasonShoe;
     var selectedColors = appState.colorsShoe;
     List<bool> selectedSeasonsList = _seasons.map((season) {
@@ -100,57 +39,61 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
       return selectedColors.contains(color);
     }).toList();
 
-    return SingleChildScrollView(
-      child: Center(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 150,
-              width: 200,
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: ElevatedButton(
-                  onPressed: _getImage,
-                  child: _imageFile == null
-                      ? const Text('image of the shoe')
-                      : Image.file(_imageFile!),
-                ),
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Shoe Name',
               ),
+              initialValue: appState.nameShoe,
+              validator: (value) {
+                if (value == "") {
+                  return 'Please enter a shoe name';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                appState.nameShoe = value!;
+              },
             ),
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: 'Name',
-                  hintText: name),
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Shoe Brand',
+              ),
+              initialValue: appState.brandShoe,
+              validator: (value) {
+                if (value == "") {
+                  return 'Please enter a shoe brand';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                appState.brandShoe = value!;
+              },
             ),
-            TextField(
-              controller: brandController,
-              decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: 'Brand',
-                  hintText: brand),
-            ),
-            const Text("Seasons"),
+            const SizedBox(height: 16),
+            const Text('Select one or more seasons:'),
             ToggleButtons(
               isSelected: selectedSeasonsList,
               onPressed: (int index) {
                 setState(() {
-                  selectedSeasons[index] = !selectedSeasons[index];
+                  selectedSeasonsList[index] = !selectedSeasonsList[index];
+                  // Update appState.seasonShoe list based on selectedSeasonsList
+                  if (selectedSeasonsList[index]) {
+                    appState.seasonShoe.add(_seasons[index]);
+                  } else {
+                    appState.seasonShoe.remove(_seasons[index]);
+                  }
                 });
               },
               children: _seasons.map((season) => Text(season)).toList(),
             ),
-            const Text('This shoe is :'),
-            ElevatedButton(
-              child: Text(isWaterproof ? 'Waterproof' : 'Not Waterproof'),
-              onPressed: () {
-                setState(() {
-                  isWaterproof = !isWaterproof;
-                });
-              },
-            ),
-            const Text("Colors"),
+            const Text("Colors:"),
             Wrap(
               children: _colors
                   .asMap()
@@ -168,6 +111,12 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
                               setState(() {
                                 selectedColorsList[index] =
                                     !selectedColorsList[index];
+                                // Update appState.colorsShoe list based on selectedColors
+                                if (selectedColorsList[index]) {
+                                  appState.colorsShoe.add(_colors[index]);
+                                } else {
+                                  appState.colorsShoe.remove(_colors[index]);
+                                }
                               });
                             },
                             child: Text(color),
@@ -177,89 +126,37 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
                   .values
                   .toList(),
             ),
-            const Text('Type'),
-            DropdownButton<String>(
-              value: _selectedType,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedType = newValue;
-                });
-              },
-              items: <String>[
-                'Sneaker',
-                'Boot',
-                'Espadrille',
-                'Hiking Boot',
-                'Other'
-              ].toList().map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            Text(error, style: const TextStyle(color: Colors.red)),
-            ElevatedButton(
-                onPressed: () async {
-                  photoURL = await uploadImage();
-                  List<String?> filteredSeasons = _seasons
-                      .asMap()
-                      .map((index, season) {
-                        if (selectedSeasons[index]) {
-                          return MapEntry(index, season);
-                        } else {
-                          return MapEntry(index, null);
-                        }
-                      })
-                      .values
-                      .where((season) => season != null)
-                      .toList();
-
-                  List<String?> filteredColors = _colors
-                      .asMap()
-                      .map((index, color) {
-                        if (selectedColors[index]) {
-                          return MapEntry(index, color);
-                        } else {
-                          return MapEntry(index, null);
-                        }
-                      })
-                      .values
-                      .where((color) => color != null)
-                      .toList();
-
-                  if (nameController.text == '' || brandController.text == '') {
-                    error = 'Please fill all the fields';
-                    appState.changeIndexMyHomePage(3);
-                    return;
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    FirebaseFirestore.instance
+                        .collection('shoe')
+                        .doc(appState.actualShoe)
+                        .set({
+                      'Waterproof': appState.waterproofShoe,
+                      'Type': 'sneacker',
+                      'PhotoURL': appState.photoUrlShoe,
+                      'Name': appState.nameShoe,
+                      'Brand': appState.brandShoe,
+                      'Seasons': appState.seasonShoe,
+                      'Colors': appState.colorsShoe,
+                      'IdUser': appState.uid,
+                      'DateLastWorn': DateTime.now(),
+                    }).then((value) {
+                      appState.changeIndexMyHomePage(1);
+                      appState.changeChange();
+                      print('Document modifié avec succès');
+                    }).catchError((error) {
+                      print('Erreur lors de l\'ajout du document: $error');
+                    });
                   }
-                  if (filteredSeasons.isEmpty || filteredColors.isEmpty) {
-                    error = 'Please select at least one color and one season';
-                    appState.changeIndexMyHomePage(3);
-                    return;
-                  }
-                  FirebaseFirestore.instance
-                      .collection('shoe')
-                      .doc(appState.actualShoe)
-                      .set({
-                    'Name': nameController.text,
-                    'Brand': brandController.text,
-                    'Seasons': filteredSeasons,
-                    'Waterproof': isWaterproof,
-                    'Colors': filteredColors,
-                    'Type': _selectedType,
-                    'PhotoURL': photoURL,
-                    'IdUser': uid,
-                    'DateLastWorn': DateTime.now(),
-                  }).then((value) {
-                    appState.changeChange();
-                    appState.changeIndexMyHomePage(3);
-                    print('Document ajouté avec succès');
-                  }).catchError((error) {
-                    print('Erreur lors de l\'ajout du document: $error');
-                  });
                 },
-                child: const Text('Add Shoe')),
+                child: const Text('Save'),
+              ),
+            ),
           ],
         ),
       ),
