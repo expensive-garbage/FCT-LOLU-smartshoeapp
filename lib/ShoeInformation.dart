@@ -58,6 +58,7 @@ class _ShoesInformationState extends State<ShoesInformation> {
                         appState.changeColorsShoe(data['Colors']);
                         appState.changeWaterproofShoe(data['Waterproof']);
                         appState.changeSeasonShoe(data['Seasons']);
+                        appState.changeTypeShoe(data['Type']);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(
@@ -95,7 +96,6 @@ class _ShoesInformationState extends State<ShoesInformation> {
               ElevatedButton(
                 onPressed: () {
                   appState.changeActualShoe("");
-                  appState.changeNbShoes(appState.nbShoes + 1);
                   appState.changeIndexMyHomePage(3);
                 },
                 child: const Text('Add a shoe'),

@@ -63,19 +63,26 @@ class _LoginState extends State<Login> {
                         onPressed: () async {
                           emailAddress = myEmailController.text;
                           password = myPasswordController.text;
-                          FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                            email: emailAddress,
-                            password: password,
-                          )
-                              .then((UserCredential userCredential) {
-                            // L'utilisateur s'est connecté avec succès
-                            // Mettez ici votre logique de redirection vers la page principale, par exemple :
+
+                          try {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            );
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                              email: emailAddress,
+                              password: password,
+                            );
                             appState.checkiflogged();
                             appState.changeIndexFirstPage(0);
-                          }).catchError((e) {
-                            // Une erreur s'est produite lors de la connexion de l'utilisateur
-                            // Gérez ici l'affichage d'un message d'erreur à l'utilisateur, par exemple :
+                            Navigator.pop(context);
+                          } on FirebaseAuthException catch (e) {
+                            Navigator.pop(context);
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -91,7 +98,7 @@ class _LoginState extends State<Login> {
                                 ],
                               ),
                             );
-                          });
+                          }
                         },
                         child: const Text("log in"))),
               ],

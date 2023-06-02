@@ -16,6 +16,7 @@ class ShoePage extends StatelessWidget {
     var name = appState.nameShoe;
     var brand = appState.brandShoe;
     var colorsString = appState.colorsShoe;
+    var typeShoe = appState.typeShoe;
     List<Color> colors = colorsString.map((colorString) {
       switch (colorString.toLowerCase()) {
         case 'grey':
@@ -184,6 +185,13 @@ class ShoePage extends StatelessWidget {
                   ),
                 ),
               ),
+              Text(
+                'Type:$typeShoe',
+                style: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 8.0),
               Text(
                 'ID: $id',
@@ -201,7 +209,7 @@ class ShoePage extends StatelessWidget {
                     children: [
                       ElevatedButton(
                           onPressed: () {
-                            appState.changeChange();
+                            appState.changeChange(true);
                             appState.changeIndexMyHomePage(4);
                           },
                           child: const Text("Change Shoe")),

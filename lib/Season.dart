@@ -12,7 +12,7 @@ class Season extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'It is $season',
-      style: TextStyle(
+      style: const TextStyle(
         color: Color.fromARGB(255, 4, 104, 130),
         fontWeight: FontWeight.bold,
         fontSize: 18.0,

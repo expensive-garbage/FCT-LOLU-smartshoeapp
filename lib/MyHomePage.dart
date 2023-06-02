@@ -65,8 +65,10 @@ class _MyHomePageState extends State<MyHomePage> {
           appState.changeActualShoe("");
           if (index == 2) {
             appState.changeIndexMyHomePage(2);
+            appState.changeChange(false);
             Navigator.pushNamed(context, '/profile');
           } else {
+            appState.changeChange(false);
             appState.changeIndexMyHomePage(index);
           }
         },

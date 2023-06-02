@@ -43,9 +43,6 @@ class MyAppState extends ChangeNotifier {
   //define the data the app needs to function
   var season = "Spring";
 
-  //a suprr
-  var nbShoes = 5;
-
   var photoUrlShoe = "";
   var nameShoe = "";
   var brandShoe = "";
@@ -53,6 +50,12 @@ class MyAppState extends ChangeNotifier {
   var waterproofShoe = false;
   var seasonShoe = [];
   var actualShoe = "";
+  var typeShoe = "";
+
+  void changeTypeShoe(String newType) {
+    typeShoe = newType;
+    notifyListeners();
+  }
 
   var indexMyHomePage = 0;
   var indexProfilePage = 0;
@@ -87,11 +90,6 @@ class MyAppState extends ChangeNotifier {
 
   void changeIndexFirstPage(int index) {
     indexFirstPage = index;
-    notifyListeners();
-  }
-
-  void changeNbShoes(int index) {
-    nbShoes = index;
     notifyListeners();
   }
 
@@ -130,8 +128,8 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeChange() {
-    change = !change;
+  void changeChange(bool newchange) {
+    change = newchange;
     notifyListeners();
   }
 }
