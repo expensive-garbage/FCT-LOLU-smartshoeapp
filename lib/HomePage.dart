@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +99,11 @@ class _HomePageState extends State<HomePage> {
                           child: ClipRRect(
                             child: oldestShoeData['PhotoURL'] == ""
                                 ? Text("No Image Here")
-                                : Image.network(
-                                    oldestShoeData['PhotoURL'],
-                                    fit: BoxFit.cover,
-                                  ),
+                                : CachedNetworkImage(
+                                    imageUrl: oldestShoeData['PhotoURL'],
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                    fit: BoxFit.fill),
                           ),
                         ),
                       );
@@ -135,10 +137,11 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: outfitData['PhotoURL'] == ""
                                 ? const Text("No Image Here")
-                                : Image.network(
-                                    outfitData['PhotoURL'],
-                                    fit: BoxFit.fill,
-                                  ),
+                                : CachedNetworkImage(
+                                    imageUrl: outfitData['PhotoURL'],
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                    fit: BoxFit.fill),
                           ),
                         ),
                       );
@@ -209,8 +212,10 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   Expanded(
-                                    child: Image.network(
-                                      data['PhotoURL'],
+                                    child: CachedNetworkImage(
+                                      imageUrl: data['PhotoURL'],
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
                                     ),
                                   ),
                                   Text(data['Name'],
@@ -235,7 +240,7 @@ class _HomePageState extends State<HomePage> {
           );
         } else {
           // Aucune donnée disponible
-          return Text('No data');
+          return const Text('No data');
         }
       },
     );

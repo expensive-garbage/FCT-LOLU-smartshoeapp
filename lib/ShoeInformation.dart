@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'MyApp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ShoesInformation extends StatefulWidget {
   const ShoesInformation({Key? key}) : super(key: key);
@@ -74,9 +75,11 @@ class _ShoesInformationState extends State<ShoesInformation> {
                         children: [
                           Expanded(
                             child: data['PhotoURL'] == ""
-                                ? Text("Any Photo Here")
-                                : Image.network(
-                                    data['PhotoURL'],
+                                ? const Text("Any Photo Here")
+                                : CachedNetworkImage(
+                                    imageUrl: data['PhotoURL'],
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
                                   ),
                           ),
                           Text(data['Name'],

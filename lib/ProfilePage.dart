@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -113,12 +114,14 @@ class _ProfileInformationPageState extends State<ProfileInformationPage> {
                           children: [
                             const SizedBox(height: 50),
                             SizedBox(
-                                width: 150,
-                                height: 150,
-                                child: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(data['PhotoURL']),
-                                )),
+                              width: 200,
+                              height: 150,
+                              child: CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(
+                                  data['PhotoURL'],
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 10),
                             Text(data['Name'],
                                 style: const TextStyle(
