@@ -80,9 +80,6 @@ class StatisticsPageState extends State<StatisticsPage> {
         .where('IdUser', isEqualTo: uid)
         .snapshots();
 
-    final Stream<QuerySnapshot> shoesDataStream =
-        FirebaseFirestore.instance.collection('shoeData').snapshots();
-
     return MaterialApp(
         home: DefaultTabController(
       length: shoesListbis.length + 1,
@@ -115,6 +112,10 @@ class StatisticsPageState extends State<StatisticsPage> {
                     DateTime.fromMillisecondsSinceEpoch(time * 1000);
                 int lastDayWore = dateTime.day;
                 int lastMonthWore = dateTime.month;
+                final Stream<QuerySnapshot> shoesDataStream = FirebaseFirestore
+                    .instance
+                    .collection('shoeData')
+                    .snapshots();
                 return SingleChildScrollView(
                   child: ConstrainedBox(
                     constraints: BoxConstraints(

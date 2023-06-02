@@ -212,7 +212,7 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify my mail address'),
                               content: Container(
-                                height: 300.0, // Définir la hauteur souhaitée
+                                height: 250.0, // Définir la hauteur souhaitée
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Form(
@@ -266,6 +266,7 @@ class SettingsPageState extends State<SettingsPage> {
                                                 print("fail mail updated");
                                               });
                                             }).catchError((err) {});
+                                            Navigator.pop(context);
                                           },
                                           child: const Text("Validation"),
                                         ),
@@ -313,7 +314,7 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify your password'),
                               content: Container(
-                                height: 300.0, // Définir la hauteur souhaitée
+                                height: 250.0, // Définir la hauteur souhaitée
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Form(
@@ -364,9 +365,11 @@ class SettingsPageState extends State<SettingsPage> {
                                                     .updatePassword(newPassword)
                                                     .then((_) {
                                                   print("sucess");
+                                                  Navigator.pop(context);
                                                   //Success, do something
                                                 }).catchError((error) {
                                                   print("fail");
+                                                  Navigator.pop(context);
                                                   //Error, show something
                                                 });
                                               }).catchError((err) {});
@@ -416,7 +419,7 @@ class SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: const Text('Modify your profile picture'),
                               content: Container(
-                                height: 300.0, // Définir la hauteur souhaitée
+                                height: 250.0, // Définir la hauteur souhaitée
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Form(
@@ -455,6 +458,7 @@ class SettingsPageState extends State<SettingsPage> {
                                               });
                                               print(
                                                   'Database updated successfully!');
+                                              Navigator.pop(context);
                                             },
                                             child: const Text("Validation"))
                                       ],
@@ -538,6 +542,7 @@ class SettingsPageState extends State<SettingsPage> {
 
                                               print(
                                                   'Database updated successfully!');
+                                              Navigator.pop(context);
                                             },
                                             child: const Text("Validation")),
                                       ],
