@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -61,171 +62,169 @@ class ShoePage extends StatelessWidget {
       }
     }
 
-    return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Text(
-                  name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Center(
-                  child: photoUrl == ""
-                      ? const Text("Any Photo Here")
-                      : Image.network(photoUrl, height: 200)),
-              const SizedBox(height: 8.0),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Brand: $brand",
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 18.0),
-                    Row(
-                      children: [
-                        const Text(
-                          'Waterproof:',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Icon(
-                          waterproof ? Icons.check : Icons.close,
-                          color: waterproof ? Colors.green : Colors.red,
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              const Center(
-                child: Text(
-                  "Colors:",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              name,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Center(
+            child: photoUrl == ""
+                ? const Text("Any Photo Here")
+                : CachedNetworkImage(
+                    imageUrl: photoUrl,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                    height: 200,
                   ),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Center(
-                child: SizedBox(
-                  height:
-                      60, // Spécifiez la hauteur souhaitée pour le Container
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(4.0),
-                      child: GridView.builder(
-                        itemCount: colors.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:
-                              10, // Nombre de colonnes dans la grille
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: colors[index] == Colors.purple
-                                      ? const LinearGradient(colors: [
-                                          Colors.blue,
-                                          Colors.yellow,
-                                          Colors.red
-                                        ])
-                                      : LinearGradient(colors: [
-                                          colors[index],
-                                          colors[index]
-                                        ]),
-                                  border: Border.all(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const Center(
-                child: Text(
-                  'Seasons:',
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Center(
-                child: Text(
-                  seasons,
+          ),
+          const SizedBox(height: 8.0),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Brand: $brand",
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-              Text(
-                'Type:$typeShoe',
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(width: 18.0),
+                Row(
+                  children: [
+                    const Text(
+                      'Waterproof:',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Icon(
+                      waterproof ? Icons.check : Icons.close,
+                      color: waterproof ? Colors.green : Colors.red,
+                    )
+                  ],
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          const Center(
+            child: Text(
+              "Colors:",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                'ID: $id',
-                style: const TextStyle(
-                  fontSize: 16.0,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8.0),
-                height: 60.0,
-                width: double.infinity,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            appState.changeChange(true);
-                            appState.changeIndexMyHomePage(4);
-                          },
-                          child: const Text("Change Shoe")),
-                      const SizedBox(width: 8.0),
-                      ElevatedButton(
-                          onPressed: () {
-                            deleteShoe();
-                          },
-                          child: const Text("Delete Shoe"))
-                    ],
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Center(
+            child: SizedBox(
+              height: 50, // Spécifiez la hauteur souhaitée pour le Container
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(4.0),
+                  child: GridView.builder(
+                    itemCount: colors.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 10, // Nombre de colonnes dans la grille
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: colors[index] == Colors.purple
+                                  ? const LinearGradient(colors: [
+                                      Colors.blue,
+                                      Colors.yellow,
+                                      Colors.red
+                                    ])
+                                  : LinearGradient(
+                                      colors: [colors[index], colors[index]]),
+                              border: Border.all(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          const Center(
+            child: Text(
+              'Seasons:',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Center(
+            child: Text(
+              seasons,
+              style: const TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            'Type: $typeShoe',
+            style: const TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            'ID: $id',
+            style: const TextStyle(
+              fontSize: 16.0,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            height: 60.0,
+            width: double.infinity,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: () {
+                        appState.changeChange(true);
+                        appState.changeIndexMyHomePage(4);
+                      },
+                      child: const Text("Change Shoe")),
+                  const SizedBox(width: 8.0),
+                  ElevatedButton(
+                      onPressed: () {
+                        deleteShoe();
+                      },
+                      child: const Text("Delete Shoe"))
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

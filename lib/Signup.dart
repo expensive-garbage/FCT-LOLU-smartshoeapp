@@ -133,6 +133,14 @@ class _SignupState extends State<Signup> {
                     padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                         onPressed: () async {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
                           emailAddress = myEmailController.text;
                           password = myPasswordController.text;
                           name = myNameController.text;
@@ -148,6 +156,7 @@ class _SignupState extends State<Signup> {
                             print('uid: ' + userCredential.user!.uid);
                             appState.uid = userCredential.user!.uid;
                             appState.changeIndexFirstPage(0);
+                            Navigator.pop(context);
                             user.doc(appState.uid).set({
                               'PhotoURL': photoURL,
                               'Name': name,

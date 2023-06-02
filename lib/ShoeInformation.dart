@@ -44,6 +44,7 @@ class _ShoesInformationState extends State<ShoesInformation> {
             children: [
               GridView.count(
                 shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 crossAxisCount: 2, // Number of columns
                 children: snapshot.data!.docs.map((DocumentSnapshot document) {
                   Map<String, dynamic> data =
@@ -60,6 +61,8 @@ class _ShoesInformationState extends State<ShoesInformation> {
                         appState.changeWaterproofShoe(data['Waterproof']);
                         appState.changeSeasonShoe(data['Seasons']);
                         appState.changeTypeShoe(data['Type']);
+                        appState.changeNcShoe(data['NeedCleaning']);
+                        appState.changeDateShoe(data['DateLastWorn']);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(

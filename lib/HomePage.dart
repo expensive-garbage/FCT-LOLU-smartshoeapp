@@ -98,12 +98,12 @@ class _HomePageState extends State<HomePage> {
                               0.35, // Ajoutez la hauteur souhaitée pour l'image
                           child: ClipRRect(
                             child: oldestShoeData['PhotoURL'] == ""
-                                ? Text("No Image Here")
+                                ? const Text("No Image Here")
                                 : CachedNetworkImage(
                                     imageUrl: oldestShoeData['PhotoURL'],
                                     errorWidget: (context, url, error) =>
                                         const Icon(Icons.error),
-                                    fit: BoxFit.fill),
+                                    fit: BoxFit.contain),
                           ),
                         ),
                       );
@@ -115,13 +115,13 @@ class _HomePageState extends State<HomePage> {
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       print('Error: ${snapshot.error}');
-                      return Text('An error occurred');
+                      return const Text('An error occurred');
                     } else if (!snapshot.hasData ||
                         snapshot.data!.docs.isEmpty) {
-                      return Text('No matching outfits');
+                      return const Text('No matching outfits');
                     } else {
                       final outfit = snapshot.data!.docs[
                           currentOutfitIndex % (snapshot.data!.docs.length)];
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                                     imageUrl: outfitData['PhotoURL'],
                                     errorWidget: (context, url, error) =>
                                         const Icon(Icons.error),
-                                    fit: BoxFit.fill),
+                                    fit: BoxFit.contain),
                           ),
                         ),
                       );
@@ -177,8 +177,9 @@ class _HomePageState extends State<HomePage> {
 
                   return Column(
                     children: [
-                      Text('Need Cleaning:'),
+                      const Text('Need Cleaning:'),
                       GridView.count(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         crossAxisCount: 2, // Number of columns
                         children: snapshot.data!.docs
@@ -197,6 +198,9 @@ class _HomePageState extends State<HomePage> {
                                 appState
                                     .changeWaterproofShoe(data['Waterproof']);
                                 appState.changeSeasonShoe(data['Seasons']);
+                                appState.changeTypeShoe(data['Type']);
+                                appState.changeNcShoe(data['NeedCleaning']);
+                                appState.changeDateShoe(data['DateLastWorn']);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color.fromARGB(255, 4,

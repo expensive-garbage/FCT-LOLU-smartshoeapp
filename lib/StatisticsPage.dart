@@ -179,7 +179,8 @@ class StatisticsPageState extends State<StatisticsPage> {
 
                                 List<double> lightRates = List.generate(
                                     ShoesDataListId.length, (index) {
-                                  return ShoesDataListId[index]['light'];
+                                  return ShoesDataListId[index]['light']
+                                      .toDouble();
                                 });
                                 List<LightShoeData> chartlightData = [];
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:namer_app/FirstPage.dart';
@@ -51,6 +52,18 @@ class MyAppState extends ChangeNotifier {
   var seasonShoe = [];
   var actualShoe = "";
   var typeShoe = "";
+  var dateShoe = Timestamp.now();
+  var ncShoe = false;
+
+  void changeDateShoe(Timestamp newDate) {
+    dateShoe = newDate;
+    notifyListeners();
+  }
+
+  void changeNcShoe(bool newValue) {
+    ncShoe = newValue;
+    notifyListeners();
+  }
 
   void changeTypeShoe(String newType) {
     typeShoe = newType;

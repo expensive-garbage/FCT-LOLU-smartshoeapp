@@ -197,6 +197,14 @@ class _AddShoePageState extends State<AddShoePage> {
             Text(error, style: const TextStyle(color: Colors.red)),
             ElevatedButton(
                 onPressed: () async {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  );
                   photoURL = await uploadImage();
                   List<String?> filteredSeasons = _seasons
                       .asMap()
@@ -243,11 +251,14 @@ class _AddShoePageState extends State<AddShoePage> {
                     'Type': _selectedType,
                     'PhotoURL': photoURL,
                     'IdUser': uid,
-                    'DateLastWorn': DateTime.now(),
+                    'NeedCleaning': false,
+                    'DateLastWorn': Timestamp.now(),
                   }).then((value) {
                     appState.changeIndexMyHomePage(1);
+                    Navigator.pop(context);
                     print('Document ajouté avec succès');
                   }).catchError((error) {
+                    Navigator.pop(context);
                     print('Erreur lors de l\'ajout du document: $error');
                   });
                 },

@@ -213,7 +213,17 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    appState.photoUrlShoe = await uploadImage();
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    );
+                    var url = await uploadImage();
+                    appState.photoUrlShoe =
+                        url == "" ? appState.photoUrlShoe : url;
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
                       FirebaseFirestore.instance
@@ -228,12 +238,15 @@ class _ChangeShoePageState extends State<ChangeShoePage> {
                         'Seasons': appState.seasonShoe,
                         'Colors': appState.colorsShoe,
                         'IdUser': appState.uid,
-                        'DateLastWorn': DateTime.now(),
+                        'DateLastWorn': appState.dateShoe,
+                        'NeedCleaning': appState.ncShoe,
                       }).then((value) {
                         appState.changeIndexMyHomePage(1);
                         appState.changeChange(false);
+                        Navigator.pop(context);
                         print('Document modifié avec succès');
                       }).catchError((error) {
+                        Navigator.pop(context);
                         print('Erreur lors de l\'ajout du document: $error');
                       });
                     }
